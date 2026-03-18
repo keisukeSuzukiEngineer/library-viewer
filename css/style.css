@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fafafa;
+}
+
+/* グリッド */
+#booklet {
+    display: grid;
+    width: calc(100% - 60px);
+    grid-template-columns: repeat(auto-fill, 120px);
+    gap: 30px;
+    padding: 15px 30px;
+    /* border: 2px solid #333; */
+    justify-content: space-around;
+    background-image: url(/img/booklet-left.jpeg), url(/img/booklet-right.jpeg), url(/img/booklet-center.jpeg);
+    background-repeat: repeat-y, repeat-y, repeat;
+    background-position: left top, right top, 25px top;
+    background-size: 25px 230px, 25px 230px, calc(100% - 27px) 230px;
+
+    /* 1冊 */
+    .book-card {
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        cursor:pointer;
+        
+        .cover {
+            width: 100%;
+            max-height: 90%;
+            padding-bottom: 8%;
+            display: block;
+            border-radius: 2px;
+            object-fit: contain;
+        }
+    }
+
+}
+
+#detail_panel_layer{
+  display: none;
+  position: fixed;
+  top: 0;
+  width:100vw;
+  height: 100vh;
+  background-color: rgb(50 50 50 / 0.5);
+  
+  &.open{
+    display: block;
+  }
+  
+}
+#detail_panel{
+    margin: 10vh auto;
+    width: 80vw;
+    max-width: 1500px;
+    height: 80%;
+    padding: 10px;
+    background: lightgray;
+    display: grid;
+    grid-template-areas:
+        "cover ctrl_panel"
+        "cover main_data"
+        "long_data long_data";
+    grid-template-columns: 30% auto;
+    grid-template-rows: 1.5rem calc(50% - 1.5rem) auto;
+    gap: 10px;
+  
+    img.book_cover{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      grid-area:cover;
+    }
+    
+    #ctrl_panel{
+      grid-area:ctrl_panel;
+      width: 100%;
+      height: 100%;
+      text-align: right;
+      
+      *{
+        display: inline-block;
+        border-radius: 0.3rem;
+        padding: 0 1rem;
+        margin-left: 1rem;
+        cursor: pointer;
+      }
+      
+      .close_btn{
+        background-color: red;
+      }
+      .edit_btn{
+        background-color: gray;
+      }
+      .
+    }
+    
+    #main_data{
+      display:inline-block;
+      width: 100%;
+      height: 100%;
+      overflow-y: scroll;
+      grid-area:main_data;
+    }
+    
+    #long_data{
+      display: block;
+      text-align: left;
+      width: 100%;
+      height: 100%;
+      overflow-y: scroll;
+      white-space: pre-line;
+      grid-area:long_data;
+      
+      *{
+        display: block;
+      }
+    }
+}

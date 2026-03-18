@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>蔵書閲覧</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app">
+    <main id="booklet">
+      <div
+        v-for="isbn in visibleIsbns"
+        :key="isbn"
+        class="book-card"
+        :data-isbn="isbn"
+        ref="bookEls"
+      >
+        <img 
+          v-if="booksByIsbn[isbn]" 
+          class="cover" 
+          :src="booksByIsbn[isbn].record.cover_url" 
+          @click.stop="show_detail(isbn)"
+        />
+        <div v-else>
+          Loading {{ isbn }}...
+        </div>
+      </div>
+    </main>
+    <div id="detail_panel_layer" :class="detail_panel_layer_class" v-if="show_isbn" @click.self="show_reset()">
+    
+      <div id="detail_panel">
+        <img class="book_cover" :src="booksByIsbn[show_isbn].record.cover_url" />
+        
+        <div id="ctrl_panel">
+          <div 
+            class="edit_btn" 
+            v-if="booksByIsbn[show_isbn].record.system_type = 'notion'"
+             @click.self="open_notion(booksByIsbn[show_isbn].record.external_book_id)">
+            編集
+          </div>
+          <div class="close_btn" @click.self="show_reset()">X</div>
+        </div>
+        <table id="main_data">
+          <tbody>
+            <tr><th>isbn</th><td>{{booksByIsbn[show_isbn].record.isbn}}</td></tr>
+            <tr><th>書籍名</th><td>{{booksByIsbn[show_isbn].record.title}}</td></tr>
+            <tr><th>所蔵場所</th><td>{{booksByIsbn[show_isbn].record.booklet}}</td></tr>
+            <tr><th>NDC</th><td>{{booksByIsbn[show_isbn].record.ndc}}</td></tr>
+            <tr><th>著者</th><td>{{booksByIsbn[show_isbn].record.author}}</td></tr>
+            <tr><th>出版社</th><td>{{booksByIsbn[show_isbn].record.publisher}}</td></tr>
+            <tr><th>発行日</th><td>{{booksByIsbn[show_isbn].record.pub_date}}</td></tr>
+            <tr><th>シリーズ</th><td>{{booksByIsbn[show_isbn].record.series}}</td></tr>
+            <tr><th>巻数</th><td>{{booksByIsbn[show_isbn].record.volume}}</td></tr>
+            <tr><th>ページ数</th><td>{{booksByIsbn[show_isbn].record.pages}}</td></tr>
+            <tr><th>登録日</th><td>{{booksByIsbn[show_isbn].record.created_at}}</td></tr>
+            <tr><th>最終更新日</th><td>{{booksByIsbn[show_isbn].record.updated_at}}</td></tr>
+          </tbody>
+        </table>
+        <table id="long_data">
+          <tbody>
+            <tr><th>目次</th><td>{{booksByIsbn[show_isbn].record.content}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+   
+
+  <script src="js/app.js"></script>
+</body>
+</html>

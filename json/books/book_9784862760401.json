@@ -1,0 +1,30 @@
+{
+  "record": {
+    "isbn": "9784862760401",
+    "booklet": "PC脇",
+    "title": "サーバントリーダーシップ",
+    "title_source": "ndl",
+    "ndc": "361.43",
+    "ndc_source": "ndl",
+    "ndc_version": "9",
+    "ndc_version_source": "ndl",
+    "author": "Greenleaf, Robert K, 1904-1990,金井, 寿宏, 1954-,金井, 真弓,ロバート・K.グリーンリーフ 著,金井壽宏 監訳,金井真弓 訳",
+    "author_source": "ndl",
+    "publisher": "英治出版",
+    "publisher_source": "ndl",
+    "pub_date": "2008",
+    "pub_date_source": "ndl",
+    "series": "",
+    "series_source": "",
+    "volume": "",
+    "volume_source": "",
+    "pages": "573",
+    "pages_source": "user",
+    "content": "『サーバントリーダーシップ』目次\n監訳者序文\n前書きに代えて\n5\n15\nはじめに\n35\n第1章リーダーとしてのサーバント\n第2章\nサーバントとしての組織\n107\n第3章\nサーバントとしてのトラスティ\n43\n165\n第4章\nビジネスにおけるサーバント・リーダーシップ\n227\n第5章\n第6章\n第7章\n第8章\n第9章\n第10章\n第11章\n教育におけるサーバント・リーダーシップ\n269\n財団におけるサーバント・リーダーシップ\n329\n教会におけるサーバント・リーダーシップ\n351\nサーバント・リーダー\n399\n官僚主義社会におけるサーバントとしての責任\nアメリカと世界のリーダーシップ\n483\n心の旅\n493\n追記\n終わりに\n監訳者解説\n551\n525\n521\n459",
+    "system_type": "notion",
+    "external_book_id": "326749de-9a26-8108-b505-d388a2de2812",
+    "created_at": "2026-02-17 06:43:08",
+    "updated_at": "2026-02-17 06:43:08",
+    "cover_url": "cover/9784862760401.jpg"
+  }
+}

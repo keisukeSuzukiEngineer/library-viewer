@@ -1,0 +1,60 @@
+{
+  "indexs": {
+    "-": {
+      "page_num": 1,
+      "sort_key": "-",
+      "pages": [
+        "json/tags/tags_-_000.json"
+      ]
+    },
+    "000": {
+      "page_num": 1,
+      "sort_key": "000",
+      "pages": [
+        "json/tags/tags_000_000.json"
+      ]
+    },
+    "100": {
+      "page_num": 1,
+      "sort_key": "100",
+      "pages": [
+        "json/tags/tags_100_000.json"
+      ]
+    },
+    "300": {
+      "page_num": 1,
+      "sort_key": "300",
+      "pages": [
+        "json/tags/tags_300_000.json"
+      ]
+    },
+    "600": {
+      "page_num": 1,
+      "sort_key": "600",
+      "pages": [
+        "json/tags/tags_600_000.json"
+      ]
+    },
+    "700": {
+      "page_num": 1,
+      "sort_key": "700",
+      "pages": [
+        "json/tags/tags_700_000.json"
+      ]
+    },
+    "800": {
+      "page_num": 1,
+      "sort_key": "800",
+      "pages": [
+        "json/tags/tags_800_000.json"
+      ]
+    },
+    "900": {
+      "page_num": 1,
+      "sort_key": "900",
+      "pages": [
+        "json/tags/tags_900_000.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "indexs": {
+    "updated_at": {
+      "page_num": 2,
+      "sort_key": "updated_at",
+      "sort_label": "更新順",
+      "pages": [
+        "json/sorted/sorted_updated_at_000.json",
+        "json/sorted/sorted_updated_at_001.json"
+      ]
+    },
+    "title": {
+      "page_num": 2,
+      "sort_key": "title",
+      "sort_label": "タイトル順",
+      "pages": [
+        "json/sorted/sorted_title_000.json",
+        "json/sorted/sorted_title_001.json"
+      ]
+    },
+    "created_at": {
+      "page_num": 2,
+      "sort_key": "created_at",
+      "sort_label": "登録順",
+      "pages": [
+        "json/sorted/sorted_created_at_000.json",
+        "json/sorted/sorted_created_at_001.json"
+      ]
+    }
+  },
+  "default_key": "updated_at",
+  "default_order": "asc"
+}
