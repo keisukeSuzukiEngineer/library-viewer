@@ -13,7 +13,7 @@ body {
     padding: 15px 30px;
     /* border: 2px solid #333; */
     justify-content: space-around;
-    background-image: url(/img/booklet-left.jpeg), url(/img/booklet-right.jpeg), url(/img/booklet-center.jpeg);
+    background-image: url(./../img/booklet-left.jpeg), url(./../img/booklet-right.jpeg), url(./../img/booklet-center.jpeg);
     background-repeat: repeat-y, repeat-y, repeat;
     background-position: left top, right top, 25px top;
     background-size: 25px 230px, 25px 230px, calc(100% - 27px) 230px;
