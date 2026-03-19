@@ -7,20 +7,20 @@ body {
 /* グリッド */
 #booklet {
     display: grid;
-    width: calc(100% - 60px);
-    grid-template-columns: repeat(auto-fill, 120px);
-    gap: 30px;
-    padding: 15px 30px;
+    width: calc(100% - 20px);
+    grid-template-columns: repeat(auto-fill, 90px);
+    /* gap: 0; */
+    padding: 5px 10px;
     /* border: 2px solid #333; */
     justify-content: space-around;
     background-image: url(./../img/booklet-left.jpeg), url(./../img/booklet-right.jpeg), url(./../img/booklet-center.jpeg);
     background-repeat: repeat-y, repeat-y, repeat;
     background-position: left top, right top, 25px top;
-    background-size: 25px 230px, 25px 230px, calc(100% - 27px) 230px;
+    background-size: 20px 165px, 20px 165px, calc(100% - 40px) 165px;
 
     /* 1冊 */
     .book-card {
-        height: 200px;
+        height: 165px;
         display: flex;
         justify-content: center;
         align-items: flex-end;
