@@ -1,8 +1,18 @@
 const { createApp } = Vue;
 
+let tokenizer;
+
+
 Vue.createApp({
   data() {
     return {
+      query_panel:{
+        text_panel:{
+          placeholder: "pending...",
+          disabled: true
+        }
+      },
+      
       // 書籍実体
       booksByIsbn: {},
 
@@ -28,55 +38,84 @@ Vue.createApp({
     // visibleBooks() {
       // return ["a", "b"];
     // },
+    sort_match_isbns(){
+      // console.log("call sort_match_isbns key:", this.sortOrders.key)
+      if(!this.sortOrders.key)return []
+      
+      return this.sortOrders.indexs[this.sortOrders.key];
+    },
+    token_match_isbns(){
+      
+      console.log(this.tokenOrders.searchText)
+      if(!tokenizer || !this.tokenOrders.searchText)return []
+      // console.log(tokenizer.tokenize(this.tokenOrders.searchText))
+      const words = tokenizer
+        .tokenize(this.tokenOrders.searchText)
+        .filter(t =>
+          ["名詞", "動詞", "形容詞"].includes(t.pos)
+        )
+        .map(t => t["basic_form"])
+        
+      if(!words || words.length <= 0)return []
+      
+      // //orバージョン
+      // const isbns = new Set(
+        // words
+        // .flatMap(token => [...this.tokenOrders.indexs[token] || []])
+      // );
+      
+      // andバージョン
+      const [first_isbns, ...rest_isbns] = words
+        .map(token => this.tokenOrders.indexs[token])
+        .filter(Boolean)
+        .sort((a, b) => a.size - b.size);
+
+      const isbns = rest_isbns
+        .reduce(
+          (base_isbns, filter_isbns)=>new Set([...base_isbns].filter(isbn => filter_isbns.has(isbn))),
+          new Set(first_isbns || [])
+        )
+
+      // for (let i = 1; i < sets.length; i++) {
+        // isbns = new Set([...result].filter(x => sets[i].has(x)));
+      // }
+      console.log("token isbns:", isbns)
+      return isbns;
+      
+    },
+    tag_match_isbns(){
+      if (!this.tagsOrders.selected || this.tagsOrders.selected.length <= 0) return []
+      
+      const isbns = new Set(
+        this.tagsOrders.selected
+          .flatMap(token => [...this.tagsOrders.indexs[token]] || [])
+      );
+      console.log("token isbns:", isbns)
+      return isbns;
+      
+    },
     visibleIsbns(){
       // 1. 並び順（ISBN配列）
       console.log("call visibleBooks")
-      if(!this.sortOrders.key)return []
-      const sortKey = this.sortOrders.key;
-      let items =
-        this.sortOrders.indexs[sortKey];
-      console.log("key: ", sortKey)
-      console.log("Object.keys(this.sortOrders.indexs): ", Object.keys(this.sortOrders.indexs))
-      console.log("items: ", items)
       
-      const useFilters = []
-
-      // 2. タグ絞り込み用 Set（AND 条件）
-      if (this.tagsOrders.selected && this.tagsOrders.selected.length > 0) {
-        this.tagsOrders.selected
-          .map(tag => this.tagsOrders.indexs[tag])
-          .forEach(s => useFilters.push(s))
+      let isbns = this.sort_match_isbns
+      console.log("sorted isbns.length: ", isbns.length)
+      if(isbns.length == 0)return isbns
+      
+      if(this.token_match_isbns.size > 0){
+        isbns = isbns.filter(isbn => this.token_match_isbns.has(isbn));
       }
-
-      // 3. トークン（検索）絞り込み用 Set
-      if (this.tokenOrders.selected && this.tokenOrders.selected.length > 0) {
-        this.tokenOrders.selected
-          .map(token => this.tokenOrders.indexs[token])
-          .forEach(s => useFilters.push(s))
+      console.log("tokened isbns.length: ", isbns.length)
+      if(isbns.length == 0)return isbns
+      
+      console.log(this.tag_match_isbns)
+      if(this.tag_match_isbns.size > 0){
+        isbns = isbns.filter(isbn => this.tag_match_isbns.has(isbn));
       }
+      console.log("taged isbns.length: ", isbns.length)
+      if(isbns.length == 0)return isbns
       
-      
-      console.log("useFilters: ", useFilters)
-      if(useFilters.length > 0){
-        const [first, ...rest] = useFilters;
-        const mergedFilter = rest.reduce(
-          (acc, s) => new Set([...acc].filter(x => s.has(x))),
-          new Set(first)
-        );
-        console.log("mergedFilter:" ,mergedFilter)
-        items = items.filter(isbn =>  mergedFilter.has(isbn))
-      }
-
-      // 4. フィルタ & book 解決
-      console.log("items: ", items)
-      
-      return items
-          // if (tagSet && !tagSet.has(isbn)) return false;
-          // // if (tokenSet && !tokenSet.has(isbn)) return false;
-          // return true;
-        // })
-        // .map(isbn => this.booksByIsbn[isbn])
-        .filter(Boolean); // 未ロード除外
+      return isbns;
     }
   },
 
@@ -89,11 +128,22 @@ Vue.createApp({
     this.$refs.bookEls.forEach(el => {
       this.observer.observe(el);
     });
+    
+    
+    // 初期化（1回だけ）
+    kuromoji.builder({
+      dicPath: "https://unpkg.com/kuromoji/dict/"
+    }).build((err, t) => {
+      tokenizer = t;
+      this.query_panel.text_panel.placeholder = "";
+      this.query_panel.text_panel.disabled = false;
+      console.log("kuromoji ready");
+    });
   },
 
   methods: {
     async loadInitial() {
-      console.log("call loadInitial")
+      // console.log("call loadInitial")
       // 1. index.json
       const index = await fetch("json/index.json").then(r => r.json());
       
@@ -108,27 +158,28 @@ Vue.createApp({
           "indexs": await loadAllPagesParallel(sortedIndex)
         }
       }
-      console.log(this.sortOrders)
+      // console.log(this.sortOrders)
       
       const tagsIndex = await fetch(index.tags_index).then(r => r.json());
-      console.log(tagsIndex)
+      // console.log(tagsIndex)
       this.tagsOrders = {
         ...{
-          // "selected": ["100"],
           "selected": [],
+          // "selected": ["100"],
           "indexs": await loadAllPagesParallel(tagsIndex)
         }
       }
-      console.log(this.tagsOrders)
+      // console.log(this.tagsOrders)
       
       const tokenIndex = await fetch(index.token_index).then(r => r.json());
-      console.log(tokenIndex)
+      // console.log(tokenIndex)
       const indexScores = await loadAllPagesParallel(tokenIndex)
-      console.log(indexScores)
+      // console.log(indexScores)
       this.tokenOrders = {
         ...{
-          // "selected": ["すすめ"],
+          // "searchText": "test",
           "selected": [],
+          // "selected": ["すすめ"],
           "indexs": Object.fromEntries(
             Object.entries(indexScores.tokens).map(([key, valueDict]) => [
               valueDict.token,
@@ -140,7 +191,7 @@ Vue.createApp({
           "indexScores": indexScores
         }
       }
-      console.log(this.tokenOrders )
+      // console.log(this.tokenOrders )
 
       // 3. 最初のページだけ読む
       // await this.loadNextPage();
