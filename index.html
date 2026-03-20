@@ -13,18 +13,19 @@
 <body>
   <div id="app">
     <div id="query_panel">
-      <div id="sort_editor">
+      <div id="query_loading" v-if="query_panel.is_loading">
+      loading...
+      </div>
+      <div id="sort_editor" v-if="!query_panel.is_loading">
         並替: <select v-model="sortOrders.key">
           <option v-for="item in sortOrders.key_select" :key="item.val" :value="item.val">
             {{ item.label }}
           </option>
         </select>
       </div>
-      <div id="text_panel">
+      <div id="text_panel" v-if="!query_panel.is_loading">
         検索: <input 
           type="text" 
-          :placeholder="query_panel.text_panel.placeholder" 
-          :disabled="query_panel.text_panel.disabled"
           v-model="tokenOrders.searchText"
           />
       </div>
@@ -88,8 +89,9 @@
   </div>
   
    
-
-  <script src="https://unpkg.com/kuromoji/build/kuromoji.js"></script>
-  <script src="js/app.js"></script>
-</body>
+  <div ref="script_area">
+    <script src="js/app.js"></script>
+    <link src="https://unpkg.com/kuromoji/build/kuromoji.js" as="script" rel="prefetch" />
+  </div>
+  </body>
 </html>

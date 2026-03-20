@@ -12,11 +12,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 6rem;
   
   *{
     display: inline-block;
   }
   
+  #query_loading{
+    text-align: center;
+    margin: 2rem;
+  }
   
   #text_panel {
     display: flex;
