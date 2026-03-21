@@ -17,6 +17,9 @@ Vue.createApp({
         tokenizer: null,
         promise: null,
       },
+      trie:{
+        root:null,
+      },
       
       // 書籍実体
       booksByIsbn: {},
@@ -42,13 +45,16 @@ Vue.createApp({
       return this.sortOrders.indexs[this.sortOrders.key] || [];
     },
     token_match_isbns(){
-      if(!this.kuromoji.tokenizer || !this.tokenOrders.searchText)return []
-      const words = this.kuromoji.tokenizer
-        .tokenize(this.tokenOrders.searchText)
-        .filter(t =>
-          ["名詞", "動詞", "形容詞"].includes(t.pos)
-        )
-        .map(t => t["basic_form"])
+      // if(!this.kuromoji.tokenizer || !this.tokenOrders.searchText)return []
+      // const words = this.kuromoji.tokenizer
+        // .tokenize(this.tokenOrders.searchText)
+        // .filter(t =>
+          // ["名詞", "動詞", "形容詞"].includes(t.pos)
+        // )
+        // .map(t => t["basic_form"])
+      const words = this.words_search(this.tokenOrders.searchText);
+      
+      console.log(this.tokenOrders.searchText, "->", words)
         
       if(!words || words.length <= 0)return []
       
@@ -115,7 +121,7 @@ Vue.createApp({
     await this.loadSorts();
     await this.loadTokens();
     await this.loadTags();
-    await this.ensureKuromoji();
+    await this.loadAnarizer();
     this.query_pane_open();
   },
 
@@ -207,40 +213,89 @@ Vue.createApp({
         "indexs": await this.loadAllPagesParallel(tagsIndex.indexs)
       }
     },
-    ensureKuromoji() {
-      if (this.kuromoji.stat != "wait") return;
+    loadAnarizer() {
+      // if (this.kuromoji.stat != "wait") return;
       
-      if (this.kuromoji.promise) {
-        return this.kuromoji.promise;
-      }
+      // if (this.kuromoji.promise) {
+        // return this.kuromoji.promise;
+      // }
   
-      this.kuromoji.stat = "loading";
-      this.kuromoji.promise = (async () => {
-        // ① script読み込み
-        if (!window.kuromoji) {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = "https://unpkg.com/kuromoji/build/kuromoji.js";
-            script.onload = resolve;
-            script.onerror = reject;
-            document.body.appendChild(script);
-          });
+      // this.kuromoji.stat = "loading";
+      // this.kuromoji.promise = (async () => {
+        // // ① script読み込み
+        // if (!window.kuromoji) {
+          // await new Promise((resolve, reject) => {
+            // const script = document.createElement("script");
+            // script.src = "https://unpkg.com/kuromoji/build/kuromoji.js";
+            // script.onload = resolve;
+            // script.onerror = reject;
+            // document.body.appendChild(script);
+          // });
+        // }
+
+        // // ② tokenizer生成
+        // return await new Promise(resolve => {
+          // kuromoji.builder({
+            // dicPath: "https://unpkg.com/kuromoji/dict/"
+          // }).build((err, tokenizer) => {
+            // this.kuromoji.tokenizer = tokenizer;
+            // this.kuromoji.stat = "standby";
+            // console.log("kuromoji standby")
+            // resolve(tokenizer);
+          // });
+        // });
+      // })();
+      
+      // return this.kuromoji.promise;
+      
+      // chat gptで出てきたTrie方式
+      const root = {}
+
+      for (const word of Object.keys(this.tokenOrders.indexs)) {
+        let node = root
+
+        for (const char of word) {
+          if (!node[char]) node[char] = {}
+          node = node[char]
         }
 
-        // ② tokenizer生成
-        return await new Promise(resolve => {
-          kuromoji.builder({
-            dicPath: "https://unpkg.com/kuromoji/dict/"
-          }).build((err, tokenizer) => {
-            this.kuromoji.tokenizer = tokenizer;
-            this.kuromoji.stat = "standby";
-            console.log("kuromoji standby")
-            resolve(tokenizer);
-          });
-        });
-      })();
+        node.$ = true
+      }
+
+      console.log(root)
       
-      return this.kuromoji.promise;
+      this.trie.root = root;
+    },
+    words_search(text) {
+      
+      const results = []
+      
+      if(!this.trie.root || !text)return results;
+
+      for (let i = 0; i < text.length; i++) {
+        let node = this.trie.root
+        let j = i
+        let lastMatch = null
+
+        while (node[text[j]]) {
+          node = node[text[j]]
+          j++
+
+          const candidate = text.slice(i, j)
+
+          if (node.$) {
+            lastMatch = candidate
+          }
+        }
+
+        if (lastMatch) {
+          results.push(lastMatch)
+
+          i += lastMatch.length - 1
+        }
+      }
+
+      return results
     },
     query_pane_open(){
       console.log("call query_pane_open")
