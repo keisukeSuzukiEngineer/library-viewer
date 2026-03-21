@@ -135,6 +135,7 @@ Vue.createApp({
       "scroll",
       () => {
           crrScroolY = window.scrollY;
+          if(crrScroolY < 0 || document.documentElement.scrollHeight < crrScroolY)return;
           this.query_panel.offset_y = Math.max(
             0,
             Math.min(
