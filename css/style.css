@@ -1,72 +1,77 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fafafa;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fafafa;
 }
 
 
 #query_panel{
   
-  padding: 12px;
-  background: #f5f6f8;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 6rem;
-  
-  *{
-    display: inline-block;
-  }
-  
-  #query_loading{
-    text-align: center;
-    margin: 2rem;
-  }
-  
-  #text_panel {
+    padding: 1rem;
+    background: #f5f6f8;
     display: flex;
-    align-items: center;
-    background: white;
-    border-radius: 12px;
-    padding: 8px 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    
-    input {
-      border: none;
-      outline: none;
-      flex: 1;
-      font-size: 16px;
-      margin-left: 8px;
-      background: transparent;
-    }
-  }
+    flex-direction: column;
+    gap: 10px;
+    height: 11rem;
+    width: calc(100% - 2rem);
+    position: fixed;
+    top: 0;
+    left: 0;
   
-  #sort_editor {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: white;
-    padding: 8px 12px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    
-    label {
-      font-size: 14px;
-      color: #666;
+    *{
+        display: inline-block;
     }
-    
-    select {
-      border: none;
-      background: #eef1f5;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 14px;
+  
+    #query_loading{
+        text-align: center;
+        margin: 2rem;
     }
-  }
+  
+    #text_panel {
+        display: flex;
+        align-items: center;
+        background: white;
+        border-radius: 12px;
+        padding: 8px 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        
+        input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 16px;
+            margin-left: 8px;
+            background: transparent;
+        }
+    }
+  
+    #sort_editor {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white;
+        padding: 8px 12px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        
+        label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        select {
+            border: none;
+            background: #eef1f5;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    }
 }
 
 /* グリッド */
 #booklet {
+    margin-top: 13rem;
     display: grid;
     width: calc(100% - 20px);
     grid-template-columns: repeat(auto-fill, 90px);
@@ -100,17 +105,16 @@ body {
 }
 
 #detail_panel_layer{
-  display: none;
-  position: fixed;
-  top: 0;
-  width:100vw;
-  height: 100vh;
-  background-color: rgb(50 50 50 / 0.5);
-  
-  &.open{
-    display: block;
-  }
-  
+    display: none;
+    position: fixed;
+    top: 0;
+    width:100vw;
+    height: 100vh;
+    background-color: rgb(50 50 50 / 0.5);
+    
+    &.open{
+        display: block;
+    }
 }
 #detail_panel{
     margin: 10vh auto;
@@ -129,70 +133,69 @@ body {
     gap: 10px;
   
     img.book_cover{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      grid-area:cover;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        grid-area:cover;
     }
     
     #ctrl_panel{
-      grid-area:ctrl_panel;
-      width: 100%;
-      height: 100%;
-      text-align: right;
-      
-      *{
-        display: inline-block;
-        border-radius: 0.3rem;
-        padding: 0 1rem;
-        margin-left: 1rem;
-        cursor: pointer;
-      }
-      
-      .close_btn{
-        background-color: red;
-      }
-      .edit_btn{
-        background-color: gray;
-      }
-      .
+        grid-area:ctrl_panel;
+        width: 100%;
+        height: 100%;
+        text-align: right;
+        
+        *{
+            display: inline-block;
+            border-radius: 0.3rem;
+            padding: 0 1rem;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+        
+        .close_btn{
+            background-color: red;
+        }
+        .edit_btn{
+            background-color: gray;
+        }
     }
     
     #main_data{
-      display:inline-block;
-      width: 100%;
-      height: 100%;
-      overflow-y: scroll;
-      grid-area:main_data;
-      text-align: left;
-      
-      *{
-        display: block;
-      }
-      
-      th{
-          position: sticky;
-          top: 0;
-          background: lightgray;
-      }
+        display:inline-block;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        grid-area:main_data;
+        text-align: left;
+        
+        *{
+            display: block;
+        }
+        
+        th{
+            position: sticky;
+            top: 0;
+            background: lightgray;
+        }
     }
     
     #long_data{
-      display: block;
-      text-align: left;
-      width: 100%;
-      height: 100%;
-      overflow-y: scroll;
-      white-space: pre-line;
-      grid-area:long_data;
-      
-      *{
         display: block;
-      }
-      th{
-          position: sticky;
-          top: 0;
-          background: lightgray;
-      }
+        text-align: left;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        white-space: pre-line;
+        grid-area:long_data;
+        
+        *{
+            display: block;
+        }
+        th{
+            position: sticky;
+            top: 0;
+            background: lightgray;
+        }
     }
 }

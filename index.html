@@ -12,9 +12,12 @@
 </head>
 <body>
   <div id="app">
-    <div id="query_panel">
+    <div id="query_panel" ref="query_panel" :style="query_panel_style">
       <div id="query_loading" v-if="query_panel.is_loading">
       loading...
+      </div>
+      <div id="title" v-if="!query_panel.is_loading">
+        My Booklet
       </div>
       <div id="sort_editor" v-if="!query_panel.is_loading">
         並替: <select v-model="sortOrders.key">
@@ -28,6 +31,9 @@
           type="text" 
           v-model="tokenOrders.searchText"
           />
+      </div>
+      <div id="text_panel" v-if="!query_panel.is_loading">
+        {{visibleIsbns.length}} / {{sort_match_isbns.length}} 冊表示
       </div>
     </div>
     <main id="booklet">
@@ -51,7 +57,7 @@
     </main>
     <div id="detail_panel_layer" :class="detail_panel_layer_class" v-if="show_isbn" @click.self="show_reset()">
     
-      <div id="detail_panel">
+      <div id="detail_panel" @wheel.stop @touchmove.stop>
         <img class="book_cover" :src="booksByIsbn[show_isbn].record.cover_url" />
         
         <div id="ctrl_panel">

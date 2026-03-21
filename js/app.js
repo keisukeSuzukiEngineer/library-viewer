@@ -3,8 +3,12 @@ const { createApp } = Vue;
 Vue.createApp({
   data() {
     return {
+      
+      lastScrollY: 0,
+      
       query_panel:{
         is_loading: true,
+        offset_y: 0,
       },
       
       index: null,
@@ -45,13 +49,6 @@ Vue.createApp({
       return this.sortOrders.indexs[this.sortOrders.key] || [];
     },
     token_match_isbns(){
-      // if(!this.kuromoji.tokenizer || !this.tokenOrders.searchText)return []
-      // const words = this.kuromoji.tokenizer
-        // .tokenize(this.tokenOrders.searchText)
-        // .filter(t =>
-          // ["名詞", "動詞", "形容詞"].includes(t.pos)
-        // )
-        // .map(t => t["basic_form"])
       const words = this.words_search(this.tokenOrders.searchText);
       
       console.log(this.tokenOrders.searchText, "->", words)
@@ -112,9 +109,16 @@ Vue.createApp({
       if(isbns.length == 0)return isbns
       
       return isbns;
-    }
+    },
+    
+    query_panel_style(){
+        return {
+            transform: `translateY(-${this.query_panel.offset_y}px)`
+        }
+    },
   },
   async mounted() {
+    this.set_events();
     await this.loadIndex();
     await this.loadFirstSort();
     this.set_observer();
@@ -126,6 +130,24 @@ Vue.createApp({
   },
 
   methods: {
+    set_events(){
+      window.addEventListener(
+      "scroll",
+      () => {
+          crrScroolY = window.scrollY;
+          this.query_panel.offset_y = Math.max(
+            0,
+            Math.min(
+              this.query_panel.offset_y + crrScroolY - this.lastScrollY,
+              this.$refs.query_panel.getBoundingClientRect().height
+            )
+          )
+          console.log(this.query_panel.offset_y)
+          this.lastScrollY = crrScroolY;
+        }, 
+        { passive: true }
+      );
+    },
     async loadIndex(){
       console.log("call loadIndex")
       this.index = await fetch("json/index.json").then(r => r.json());
