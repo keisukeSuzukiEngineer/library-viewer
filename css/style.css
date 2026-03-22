@@ -117,11 +117,10 @@ body {
 
     /* 1冊 */
     .book-card {
-        height: 165px;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        cursor:pointer;
+        height: 132px;
+        margin-top: 20px;
+        margin-bottom: 13px;
+        cursor: pointer;
         
         .loading{
             margin-bottom: 70%;
@@ -129,11 +128,11 @@ body {
         
         .cover {
             width: 100%;
-            max-height: 80%;
-            padding-bottom: 15%;
+            height: 100%;
             display: block;
             border-radius: 2px;
             object-fit: contain;
+            object-position: bottom center;
         }
     }
 
