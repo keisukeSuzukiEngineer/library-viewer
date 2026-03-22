@@ -71,7 +71,7 @@
         :key="isbn"
         class="book-card"
         :data-isbn="isbn"
-        ref="bookEls"
+        :ref="el => register_observe(el)"
       >
         <img 
           v-if="booksByIsbn[isbn]" 
@@ -85,7 +85,7 @@
           <span>Loading</span>
           <span
           style="display:none"
-          :style="{'display':'inline'}"
+          :style="{'display':'block'}"
           > {{ isbn }}</span>
           <span>...</span>
         </div>

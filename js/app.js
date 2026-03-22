@@ -11,7 +11,7 @@ Vue.createApp({
         offset_y: 0,
       },
       
-      searchText: "日　日常 神話　にゃー　世界　癌　日日本にゃー歴史癌",
+      searchText: "",
       index: null,
       sortedIndex: null,
       sortOrders: {},
@@ -131,10 +131,11 @@ Vue.createApp({
       }
   },
   async mounted() {
+    this.standby_observer();
     this.set_events();
     await this.loadIndex();
     await this.loadFirstSort();
-    this.set_observer();
+    // this.set_observe();
     await this.loadSorts();
     await this.loadTokens();
     await this.loadTags();
@@ -189,14 +190,14 @@ Vue.createApp({
         })
       }
     },
-    set_observer(){
-      const observer = new IntersectionObserver(
+    standby_observer(){
+      this.observer = new IntersectionObserver(
         entries => {
           for (const entry of entries) {
             if (entry.isIntersecting) {
               const isbn = entry.target.dataset.isbn;
               this.loadBook(isbn);
-              observer.unobserve(entry.target);
+              this.observer.unobserve(entry.target);
             }
           }
         },
@@ -206,11 +207,15 @@ Vue.createApp({
           threshold: 0,
         }
       );
-      
+    },
+    register_observe(el){
       // console.log(this.$refs)
-      this.$refs.bookEls.forEach(el => {
-        observer.observe(el);
-      });
+      // this.$refs.bookEls.forEach(el => {
+        // this.observer.observe(el);
+      // });
+      // console.log(el, this.observer.observe)
+      if(!el)return;
+      this.observer.observe(el);
     },
     async loadSorts(){
       // console.log("call loadSorts")

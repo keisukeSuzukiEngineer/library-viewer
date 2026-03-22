@@ -113,6 +113,7 @@ body {
     background-repeat: repeat-y, repeat-y, repeat;
     background-position: left top, right top, 25px top;
     background-size: 20px 165px, 20px 165px, calc(100% - 40px) 165px;
+    overflow: hidden;
 
     /* 1冊 */
     .book-card {
