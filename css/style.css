@@ -12,40 +12,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 11rem;
+    height: 13rem;
     width: calc(100% - 2rem);
     position: fixed;
     top: 0;
     left: 0;
+    white-space: nowrap;
   
-    *{
+    > *{
         display: inline-block;
-    }
-  
-    #query_loading{
-        text-align: center;
-        margin: 2rem;
-    }
-  
-    #text_panel {
-        display: flex;
-        align-items: center;
-        background: white;
-        border-radius: 12px;
-        padding: 8px 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        
-        input {
-            border: none;
-            outline: none;
-            flex: 1;
-            font-size: 16px;
-            margin-left: 8px;
-            background: transparent;
-        }
-    }
-  
-    #sort_editor {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -53,7 +28,17 @@ body {
         padding: 8px 12px;
         border-radius: 12px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        
+        overflow: hidden;
+    }
+  
+    #query_loading{
+        text-align: center;
+        margin: 2rem;
+    }
+    
+  
+    #sort_editor {
+      
         label {
             font-size: 14px;
             color: #666;
@@ -67,11 +52,56 @@ body {
             font-size: 14px;
         }
     }
+  
+    #text_panel {
+        
+        input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 16px;
+            margin-left: 8px;
+            background: transparent;
+        }
+    }
+    
+    #text_result{
+        overflow-x: scroll;
+    }
+    
+    .token_result{
+        align-items: center;
+        gap: 6px;
+
+        padding: 6px 12px;
+        border-radius: 999px;
+
+        background: #e5e7eb;
+        color: #333;
+
+        border: none;
+        cursor: pointer;
+
+        transition: all 0.15s ease;
+        
+        background: #2563eb;
+        color: white;
+
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        margin: 0 0.5rem;
+    }
+    
+    .token_result.disable {
+        background: gray;
+        color: white;
+
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
 }
 
 /* グリッド */
 #booklet {
-    margin-top: 13rem;
+    margin-top: 15rem;
     display: grid;
     width: calc(100% - 20px);
     grid-template-columns: repeat(auto-fill, 90px);
@@ -91,6 +121,10 @@ body {
         justify-content: center;
         align-items: flex-end;
         cursor:pointer;
+        
+        .loading{
+            margin-bottom: 70%;
+        }
         
         .cover {
             width: 100%;

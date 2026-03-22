@@ -13,15 +13,29 @@
 <body>
   <div id="app">
     <div id="query_panel" ref="query_panel" :style="query_panel_style">
-      <div id="query_loading" v-if="query_panel.is_loading">
+      <div 
+        id="query_loading" 
+        v-if="query_panel.is_loading" 
+        style="display:none;" 
+        :style="{'display':'block'}"
+      >
       loading...
       </div>
       <div id="title" v-if="!query_panel.is_loading">
         My Booklet
       </div>
       <div id="sort_editor" v-if="!query_panel.is_loading">
-        並替: <select v-model="sortOrders.key">
-          <option v-for="item in sortOrders.key_select" :key="item.val" :value="item.val">
+        <span>並替: </span>
+        <select 
+          v-model="sortOrders.key"
+          style="color:rgba(0,0,0,0)"
+          :style="{'color':'black'}"
+        >
+          <option 
+            v-for="item in sortOrders.key_select" 
+            :key="item.val" 
+            :value="item.val"
+          >
             {{ item.label }}
           </option>
         </select>
@@ -29,11 +43,26 @@
       <div id="text_panel" v-if="!query_panel.is_loading">
         検索: <input 
           type="text" 
-          v-model="tokenOrders.searchText"
+          v-model="searchText"
+          @change="change_search_text"
           />
       </div>
-      <div id="text_panel" v-if="!query_panel.is_loading">
-        {{visibleIsbns.length}} / {{sort_match_isbns.length}} 冊表示
+      <div id="text_result" v-if="!query_panel.is_loading">
+        <span
+          style="color:rgba(0,0,0,0);"
+          :style="{'color':'black'}"
+        >
+          {{visibleIsbns.length}} / {{sort_match_isbns.length}} 冊表示　
+        </span>
+        <span 
+          v-for="token_result in token_results" 
+          :class="token_result['class']"
+           @click="click_token_result(token_result)"
+          style="color:rgba(0,0,0,0)"
+          :style="{'color':'black'}"
+         >
+          {{token_result['text']}}
+        </span>
       </div>
     </div>
     <main id="booklet">
@@ -49,9 +78,166 @@
           class="cover" 
           :src="booksByIsbn[isbn].record.cover_url" 
           @click.stop="show_detail(isbn)"
+          style="display:none;" 
+          :style="{'display':'block'}"
         />
-        <div v-else>
-          Loading {{ isbn }}...
+        <div class="loading" v-else>
+          <span>Loading</span>
+          <span
+          style="display:none"
+          :style="{'display':'inline'}"
+          > {{ isbn }}</span>
+          <span>...</span>
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
+        </div>
+      </div>
+      <div v-if="false" class="book-card">
+        <div class="loading">
+          Loading ...
         </div>
       </div>
     </main>
@@ -97,7 +283,6 @@
    
   <div ref="script_area">
     <script src="js/app.js"></script>
-    <link src="https://unpkg.com/kuromoji/build/kuromoji.js" as="script" rel="prefetch" />
   </div>
   </body>
 </html>
