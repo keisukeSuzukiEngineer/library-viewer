@@ -1,3 +1,8 @@
+@keyframes blinking {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -38,7 +43,8 @@ body {
     
   
     #sort_editor {
-      
+        transition: background-color 0.5s ease; /* 0.5秒かけて色を変化 */
+        
         label {
             font-size: 14px;
             color: #666;
@@ -50,6 +56,34 @@ body {
             padding: 6px 10px;
             border-radius: 8px;
             font-size: 14px;
+            transition: opacity 0.5s ease; /* 0.5秒かけて色を変化 */
+            color: rgba(0, 0, 0, 0);
+            
+            &.transparent{
+                display: none;
+                opacity: 0;
+            }
+            
+            &.activate{
+                color: black;
+            }
+            
+
+        }
+        
+      
+        &.wait{
+            background: lightgray;
+        }
+        
+        &.loading{
+          
+          background: lightgray;
+            
+          &:after{
+            content: "loading...";
+            animation: blinking 1s ease-in-out infinite alternate;
+          }
         }
     }
   
@@ -62,6 +96,26 @@ body {
             font-size: 16px;
             margin-left: 8px;
             background: transparent;
+            transition: opacity 0.5s ease; /* 0.5秒かけて色を変化 */
+            
+            &.transparent{
+                display: none;
+                opacity: 0;
+            }
+        }
+      
+        &.wait{
+            background: lightgray;
+        }
+        
+        &.loading{
+          
+          background: lightgray;
+            
+          &:after{
+            content: "loading...";
+            animation: blinking 1s ease-in-out infinite alternate;
+          }
         }
     }
     

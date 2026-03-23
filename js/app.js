@@ -3,48 +3,53 @@ const { createApp } = Vue;
 Vue.createApp({
   data() {
     return {
-      
+      // 検索パネル用
       lastScrollY: 0,
-      
+      searchText: "",
+      matched_words_isbns: [],
       query_panel:{
         is_loading: true,
         offset_y: 0,
+        sort_editor:{
+          stat: "wait",
+          class:{
+            wait: true,
+            loading:false,
+            standby:false
+          }
+        },
+        text_panel:{
+          stat: "wait",
+          class:{
+            wait: true,
+            loading:false,
+            standby:false
+          }
+        }
       },
-      
-      searchText: "",
-      index: null,
-      sortedIndex: null,
-      sortOrders: {},
-      tagsOrders: {},
-      tokenOrders: {},
-      kuromoji:{
-        stat: "wait", // wait, loading, standby
-        tokenizer: null,
-        promise: null,
-      },
-      trie:{
-        root:null,
-      },
-      matched_words_isbns: [],
-      
-      // 書籍実体
-      booksByIsbn: {},
-
-      // 現在の表示順（ISBN配列）
-      orderedIsbns: [],
-      
-      show_isbn: null,
       detail_panel_layer_class: {
         "open": false
       },
+      
+      //表示検索用データ関係
+      observer:null,
+      index: null,
+      sortOrders: null,
+      tagsOrders: null,
+      tokenOrders: null,
+      trie:{
+        root:null,
+        has_char:null,
+      },
+      booksByIsbn: {},
 
-      // ロード済みフラグ
-      loadedPages: 0,
-      pagePaths: []
+      // 詳細表示用
+      show_isbn: null,
     };
   },
 
   computed: {
+    // 表示用isbn作成関係
     sort_match_isbns(){
       // console.log("call sort_match_isbns")
       if(!this.sortOrders || !this.sortOrders.key)return []
@@ -72,7 +77,7 @@ Vue.createApp({
       
     },
     tag_match_isbns(){
-      if (!this.tagsOrders.selected || this.tagsOrders.selected.length <= 0) return []
+      if (!this.tagsOrders || !this.tagsOrders.selected || this.tagsOrders.selected.length <= 0) return []
       
       const isbns = new Set(
         this.tagsOrders.selected
@@ -85,6 +90,12 @@ Vue.createApp({
     visibleIsbns(){
       // 1. 並び順（ISBN配列）
       // console.log("call visibleBooks")
+      
+      if(!this.sortOrders){
+        // console.log("retuen visibleBooks prev_load_pattorn", Array(24).fill(""))
+        
+        return Array(12).fill("");
+      }
       
       let isbns = this.sort_match_isbns
       // console.log("sorted isbns.length: ", isbns.length)
@@ -107,10 +118,38 @@ Vue.createApp({
       return isbns;
     },
     
+    // 検索パネル表示関係
     query_panel_style(){
         return {
             transform: `translateY(-${this.query_panel.offset_y}px)`
         }
+    },
+    sort_editor_class(){
+      const stat = this.query_panel.sort_editor.stat
+      return {
+          wait: stat == "wait",
+          loading:stat == "loading",
+          standby:stat == "standby"
+      }
+    },
+    sort_editor_select_class(){
+      return {
+          'transparent': this.query_panel.sort_editor.stat != "standby",
+          'activate': this.query_panel.sort_editor.stat == "standby",
+      }
+    },
+    text_panel_input_class(){
+      return {
+          'transparent': this.query_panel.text_panel.stat != "standby"
+      }
+    },
+    text_panel_class(){
+      const stat = this.query_panel.text_panel.stat
+      return {
+          wait: stat == "wait",
+          loading:stat == "loading",
+          standby:stat == "standby"
+      }
     },
     token_results(){
       // console.log("call token_results")
@@ -134,17 +173,13 @@ Vue.createApp({
     this.standby_observer();
     this.set_events();
     await this.loadIndex();
-    await this.loadFirstSort();
-    // this.set_observe();
-    await this.loadSorts();
-    await this.loadTokens();
-    await this.loadTags();
-    await this.loadAnarizer();
-    this.change_search_text(); // 基本不要だが、側で初めから検索テキストを設定していた場合に必要
+    await this.loadSorts(def_only=true);
     this.query_pane_open();
+    this.change_search_text(); // 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
   },
 
   methods: {
+    // 要素へのイベント設定用
     set_events(){
       window.addEventListener(
       "scroll",
@@ -164,73 +199,56 @@ Vue.createApp({
         { passive: true }
       );
     },
+    
+    // 検索表示用データ読み込み系
     async loadIndex(){
       // console.log("call loadIndex")
       this.index = await fetch("json/index.json").then(r => r.json());
     },
-    async loadFirstSort(){
+    async loadSorts(def_only = false){
       // console.log("call loadFirstSort")
-      this.sortedIndex = await fetch(this.index.sorted_inex).then(r => r.json());
+      if(
+        this.sortOrders &&
+        !this.sortOrders.def_only
+      ){
+        // console.log("skip loadSorts")
+        return;
+      }
+      const sortedIndex = await fetch(this.index.sorted_inex).then(r => r.json());
       // console.log(this.sortedIndex)
       
-      const def_key = this.sortedIndex.default_key;
+      const def_key = sortedIndex.default_key;
       // console.log(def_key, this.sortedIndex.indexs[def_key])
       // console.log({
             // def_key: this.sortedIndex.indexs[def_key]
         // })
       this.sortOrders = {
         "key": def_key,
-        "order": this.sortedIndex.default_order,
+        "order": sortedIndex.default_order,
         "key_select": Object
-          .entries(this.sortedIndex.indexs)
+          .entries(sortedIndex.indexs)
+          .filter(itm => itm[0] == def_key || !def_only)
           .map(itm => ({"val" : itm[1].sort_key, "label": itm[1].sort_label})),
         "order_select": [{"label": "昇順", "val": "asc"}, {"label": "降順", "val": "desc"}],
-        "indexs": await this.loadAllPagesParallel({
-            [def_key]: this.sortedIndex.indexs[def_key]
-        })
-      }
-    },
-    standby_observer(){
-      this.observer = new IntersectionObserver(
-        entries => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              const isbn = entry.target.dataset.isbn;
-              this.loadBook(isbn);
-              this.observer.unobserve(entry.target);
-            }
-          }
-        },
-        {
-          root: null,
-          rootMargin: '300px', // ←「もうすぐ描画されそう」
-          threshold: 0,
-        }
-      );
-    },
-    register_observe(el){
-      // console.log(this.$refs)
-      // this.$refs.bookEls.forEach(el => {
-        // this.observer.observe(el);
-      // });
-      // console.log(el, this.observer.observe)
-      if(!el)return;
-      this.observer.observe(el);
-    },
-    async loadSorts(){
-      // console.log("call loadSorts")
-      this.sortOrders = {
-        "key": this.sortedIndex.default_key,
-        "order": this.sortedIndex.default_order,
-        "key_select": Object
-          .entries(this.sortedIndex.indexs)
-          .map(itm => ({"val" : itm[1].sort_key, "label": itm[1].sort_label})),
-        "order_select": [{"label": "昇順", "val": "asc"}, {"label": "降順", "val": "desc"}],
-        "indexs": await this.loadAllPagesParallel(this.sortedIndex.indexs)
+        "indexs": await this.loadAllPagesParallel(
+            Object
+            .entries(sortedIndex.indexs)
+            .filter(itm => itm[0] == def_key || !def_only)
+            .reduce((acc, cur) => {
+              acc[cur[0]] = cur[1];
+              return acc;
+            }, {})
+        ),
+        "def_only": def_only
       }
     },
     async loadTokens(){
       // console.log("call loadTokens")
+      if(this.tokenOrders){
+        // console.log("skip loadTokens")
+        this.loadAnarizer();
+        return
+      }
       
       this.tokenIndex = await fetch(this.index.token_index).then(r => r.json());
       const indexScores = await this.loadAllPagesParallel(this.tokenIndex.indexs)
@@ -248,9 +266,12 @@ Vue.createApp({
           .map(([key, valueDict]) => [valueDict.token, valueDict.isbns])
         )
       }
+      
+      this.loadAnarizer();
     },
     async loadTags(){
       // console.log("call loadTags")
+      if(this.tokenOrders)return
       
       const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
       this.tagsOrders = {
@@ -260,6 +281,11 @@ Vue.createApp({
       }
     },
     loadAnarizer() {
+      // console.log("call loadAnarizer", this.trie)
+      if(this.trie.has_char){
+        // console.log("skip loadAnarizer")
+        return
+      }
       
       // chat gptで出てきたTrie方式
       const root = {}
@@ -297,6 +323,79 @@ Vue.createApp({
       // console.log([...has_char['あ']].map(word_char=>this.tokenOrders.indexScores[word_char]))
       this.trie.has_char = has_char;
     },
+    async loadAllPagesParallel(indexs, isbnIsSet = false) {
+      const result = {};
+      // console.log(indexs)
+      await Promise.all(
+        Object.entries(indexs).map(async ([key, info]) => {
+          const pagesData = await Promise.all(
+            info.pages.map(p => fetch(p).then(r => r.json()))
+          );
+
+          // 🔽 ここで加工
+          const isbns = pagesData.flatMap(p => p.isbns);
+
+          result[key] = isbnIsSet
+            ? new Set(isbns)
+            : isbns;
+        })
+      );
+
+
+      return result;
+    },
+    async loadBook(isbn) {
+      if (this.booksByIsbn[isbn]) return;
+
+      // プレースホルダ（即反映）
+      this.$set
+        ? this.$set(this.booksByIsbn, isbn, null)
+        : (this.booksByIsbn[isbn] = null);
+
+      const book = await fetch(`json/books/book_${isbn}.json`)
+        .then(r => r.json());
+
+      // 取れた瞬間に画面更新
+      this.booksByIsbn[isbn] = book;
+    },
+    registerBookEl(isbn, el) {
+      if (!el) return;
+      el.dataset.isbn = isbn;
+      this.observer.observe(el);
+    },
+    standby_observer(){
+      if(this.observer)return
+      this.observer = new IntersectionObserver(
+        entries => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const isbn = entry.target.dataset.isbn;
+              this.loadBook(isbn);
+              this.observer.unobserve(entry.target);
+            }
+          }
+        },
+        {
+          root: null,
+          rootMargin: '300px', // ←「もうすぐ描画されそう」
+          threshold: 0,
+        }
+      );
+    },
+    register_observe(el){
+      // console.log(this.$refs)
+      // this.$refs.bookEls.forEach(el => {
+        // this.observer.observe(el);
+      // });
+      // console.log(el, this.observer.observe)
+      if(!el || !el.dataset.isbn || !this.observer){
+        // console.log(el, this.observer)
+        return;
+      }
+      this.observer.observe(el);
+    },
+
+    // 検索文字列の解析用
     match_words_search(orijin_text) {
       
       if(!this.trie.root || !this.trie.has_char || !orijin_text)return new Set(), new Set();
@@ -360,64 +459,10 @@ Vue.createApp({
       
       return [match_words, candidate_words]
     },
+
+    //検索用パネル操作用
     query_pane_open(){
-      // console.log("call query_pane_open")
       this.query_panel.is_loading = false;
-    },
-    async loadAllPagesParallel(indexs, isbnIsSet = false) {
-      const result = {};
-      // console.log(indexs)
-      await Promise.all(
-        Object.entries(indexs).map(async ([key, info]) => {
-          const pagesData = await Promise.all(
-            info.pages.map(p => fetch(p).then(r => r.json()))
-          );
-
-          // 🔽 ここで加工
-          const isbns = pagesData.flatMap(p => p.isbns);
-
-          result[key] = isbnIsSet
-            ? new Set(isbns)
-            : isbns;
-        })
-      );
-
-
-      return result;
-    },
-    async loadBook(isbn) {
-      if (this.booksByIsbn[isbn]) return;
-
-      // プレースホルダ（即反映）
-      this.$set
-        ? this.$set(this.booksByIsbn, isbn, null)
-        : (this.booksByIsbn[isbn] = null);
-
-      const book = await fetch(`json/books/book_${isbn}.json`)
-        .then(r => r.json());
-
-      // 取れた瞬間に画面更新
-      this.booksByIsbn[isbn] = book;
-    },
-    
-    registerBookEl(isbn, el) {
-      if (!el) return;
-      el.dataset.isbn = isbn;
-      this.observer.observe(el);
-    },
-    show_reset(){
-      this.show_isbn = null;
-      this.detail_panel_layer_class.open = false;
-      
-    },
-    show_detail(isbn){
-      this.show_isbn = isbn
-      this.detail_panel_layer_class.open = true;
-      
-      // console.log(this.show_isbn, this.detail_panel_layer_class)
-    },
-    open_notion(page_id){
-      window.open("https://www.notion.so/"+page_id.replace(/\_/g, "").replace(/-/g, ""), '_blank')
     },
     click_token_result(token_result){
       // console.log("call click_token_result", token_result)
@@ -465,7 +510,48 @@ Vue.createApp({
       ]
       
       this.matched_words_isbns = words_isbns
-    }
+    },
+    async sort_setting(){
+      // console.log("call sort_setting")
+      this.query_panel.sort_editor.stat = "loading"
+      this.query_panel.sort_editor.class.wait = false
+      this.query_panel.sort_editor.class.loading = true
+          
+      await this.loadSorts()
+          
+      this.query_panel.sort_editor.stat = "standby"
+      this.query_panel.sort_editor.class.loading = false
+      this.query_panel.sort_editor.class.standby = true
+    },
+    async text_panel_setting(){
+      // console.log("call sort_setting")
+      this.query_panel.text_panel.stat = "loading"
+      this.query_panel.text_panel.class.wait = false
+      this.query_panel.text_panel.class.loading = true
+          
+      await this.loadTokens()
+          
+      this.query_panel.text_panel.stat = "standby"
+      this.query_panel.text_panel.class.loading = false
+      this.query_panel.text_panel.class.standby = true
+    },
+    
+    //詳細表示パネル操作用
+    //TODO ここはset_show_isbnメソッドだけにして、クラスはcomputedにする
+    show_reset(){
+      this.show_isbn = null;
+      this.detail_panel_layer_class.open = false;
+      
+    },
+    show_detail(isbn){
+      this.show_isbn = isbn
+      this.detail_panel_layer_class.open = true;
+    },
+    
+    // 編集機能への連携用
+    open_notion(page_id){
+      window.open("https://www.notion.so/"+page_id.replace(/\_/g, "").replace(/-/g, ""), '_blank')
+    },
   }
 }).mount("#app");
 

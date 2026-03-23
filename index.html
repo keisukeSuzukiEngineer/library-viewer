@@ -8,7 +8,6 @@
   <title>蔵書閲覧</title>
 
   <link rel="stylesheet" href="css/style.css" />
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body>
   <div id="app">
@@ -24,12 +23,16 @@
       <div id="title" v-if="!query_panel.is_loading">
         My Booklet
       </div>
-      <div id="sort_editor" v-if="!query_panel.is_loading">
+      <div 
+        id="sort_editor" 
+        :class="sort_editor_class"
+        v-if="!query_panel.is_loading"
+        @click="sort_setting()"
+      >
         <span>並替: </span>
         <select 
           v-model="sortOrders.key"
-          style="color:rgba(0,0,0,0)"
-          :style="{'color':'black'}"
+          :class="sort_editor_select_class"
         >
           <option 
             v-for="item in sortOrders.key_select" 
@@ -40,11 +43,17 @@
           </option>
         </select>
       </div>
-      <div id="text_panel" v-if="!query_panel.is_loading">
+      <div 
+        id="text_panel" 
+        v-if="!query_panel.is_loading"
+        :class="text_panel_class"
+        @click="text_panel_setting()"
+      >
         検索: <input 
           type="text" 
           v-model="searchText"
           @change="change_search_text"
+          :class="text_panel_input_class"
           />
       </div>
       <div id="text_result" v-if="!query_panel.is_loading">
@@ -282,6 +291,7 @@
   
    
   <div ref="script_area">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="js/app.js"></script>
   </div>
   </body>
