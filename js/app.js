@@ -187,13 +187,22 @@ Vue.createApp({
         let ndc = book['ndc']
         if(this.ndc_codes){
           const record = this.ndc_codes[ndc.split(".")[0]]
-          console.log(record)
+          console.log(record, book.ndc_version)
           if(record){
+            console.log(record, book.ndc_version)
             ndc += `:${record['ndc'+book.ndc_version+'_name']}`
           }
         }
         
         // booksByIsbnの汚染を防ぐため、bookを直接編集することはしない
+        console.log({
+          ...book,
+          'ndc': ndc,
+        })
+        console.log({
+          ...book,
+          'ndc': ndc,
+        }['updated_at'])
         return {
           ...book,
           'ndc': ndc,
