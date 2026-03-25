@@ -67,10 +67,14 @@ body {
             &.activate{
                 color: black;
             }
-            
-
         }
         
+        select#key_select{
+          margin-left: auto;
+        }
+        select#order_select{
+          margin-left: 1rem;
+        }
       
         &.wait{
             background: lightgray;

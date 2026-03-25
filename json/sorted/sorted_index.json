@@ -29,5 +29,5 @@
     }
   },
   "default_key": "updated_at",
-  "default_order": "asc"
+  "default_order": "desc"
 }

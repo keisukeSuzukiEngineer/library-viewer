@@ -1,5 +1,6 @@
 {
   "sorted_inex": "json/sorted/sorted_index.json",
   "tags_index": "json/tags/tags_index.json",
-  "token_index": "json/tokens/tokens_index.json"
+  "token_index": "json/tokens/tokens_index.json",
+  "ndc_codes": "csv/ndc_codes.csv"
 }

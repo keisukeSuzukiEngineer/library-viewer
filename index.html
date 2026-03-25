@@ -32,10 +32,24 @@
         <span>並替: </span>
         <select 
           v-model="sortOrders.key"
+          id="key_select"
           :class="sort_editor_select_class"
         >
           <option 
             v-for="item in sortOrders.key_select" 
+            :key="item.val" 
+            :value="item.val"
+          >
+            {{ item.label }}
+          </option>
+        </select>
+        <select 
+          v-model="sortOrders.order"
+          id="order_select"
+          :class="sort_editor_select_class"
+        >
+          <option 
+            v-for="item in sortOrders.order_select" 
             :key="item.val" 
             :value="item.val"
           >
@@ -250,10 +264,15 @@
         </div>
       </div>
     </main>
-    <div id="detail_panel_layer" :class="detail_panel_layer_class" v-if="show_isbn" @click.self="show_reset()">
+    <div 
+      id="detail_panel_layer" 
+      :class="detail_panel_layer_class" 
+      v-if="show_isbn" 
+      @click.self="show_reset()"
+    >
     
       <div id="detail_panel" @wheel.stop @touchmove.stop>
-        <img class="book_cover" :src="booksByIsbn[show_isbn].record.cover_url" />
+        <img class="book_cover" :src="book_detail.cover_url" />
         
         <div id="ctrl_panel">
           <div 
@@ -291,8 +310,8 @@
   
    
   <div ref="script_area">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="js/app.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="js/app.js"defer></script>
   </div>
   </body>
 </html>

@@ -27,9 +27,9 @@ Vue.createApp({
           }
         }
       },
-      detail_panel_layer_class: {
-        "open": false
-      },
+      // detail_panel_layer_class: {
+        // "open": false
+      // },
       
       //表示検索用データ関係
       observer:null,
@@ -45,6 +45,7 @@ Vue.createApp({
 
       // 詳細表示用
       show_isbn: null,
+      ndc_codes: null,
     };
   },
 
@@ -53,7 +54,12 @@ Vue.createApp({
     sort_match_isbns(){
       // console.log("call sort_match_isbns")
       if(!this.sortOrders || !this.sortOrders.key)return []
-      return this.sortOrders.indexs[this.sortOrders.key] || [];
+      
+      isbns = [...(this.sortOrders.indexs[this.sortOrders.key] || [])]
+      
+      if(this.sortOrders.order == "desc")isbns.reverse();
+      
+      return isbns;
     },
     token_match_isbns(){
       // console.log("call token_match_isbns")
@@ -167,7 +173,32 @@ Vue.createApp({
           
           }
         })
+    },
+      
+    // 詳細画面関係
+    detail_panel_layer_class(){
+      return {
+        "open": this.show_isbn,
       }
+    },
+    book_detail(){
+        const book = this.booksByIsbn[this.show_isbn].record;
+        
+        let ndc = book['ndc']
+        if(this.ndc_codes){
+          const record = this.ndc_codes[ndc.split(".")[0]]
+          console.log(record)
+          if(record){
+            ndc += `:${record['ndc'+book.ndc_version+'_name']}`
+          }
+        }
+        
+        // booksByIsbnの汚染を防ぐため、bookを直接編集することはしない
+        return {
+          ...book,
+          'ndc': ndc,
+        }
+    }
   },
   async mounted() {
     this.standby_observer();
@@ -394,6 +425,27 @@ Vue.createApp({
       }
       this.observer.observe(el);
     },
+    async load_ndc_code(){
+      
+      if(this.ndc_codes)return
+          
+      const res = await fetch(this.index.ndc_codes);
+      const text = await res.text();
+
+      const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+      const headers = lines[0].split(",");
+
+      const data = lines.slice(1).map(line => {
+        const values = line.split(",");
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = values[i];
+        });
+        return obj;
+      });
+
+      this.ndc_codes = data;
+    },
 
     // 検索文字列の解析用
     match_words_search(orijin_text) {
@@ -514,38 +566,28 @@ Vue.createApp({
     async sort_setting(){
       // console.log("call sort_setting")
       this.query_panel.sort_editor.stat = "loading"
-      this.query_panel.sort_editor.class.wait = false
-      this.query_panel.sort_editor.class.loading = true
-          
+      
       await this.loadSorts()
           
       this.query_panel.sort_editor.stat = "standby"
-      this.query_panel.sort_editor.class.loading = false
-      this.query_panel.sort_editor.class.standby = true
     },
     async text_panel_setting(){
       // console.log("call sort_setting")
       this.query_panel.text_panel.stat = "loading"
-      this.query_panel.text_panel.class.wait = false
-      this.query_panel.text_panel.class.loading = true
           
       await this.loadTokens()
           
       this.query_panel.text_panel.stat = "standby"
-      this.query_panel.text_panel.class.loading = false
-      this.query_panel.text_panel.class.standby = true
     },
     
     //詳細表示パネル操作用
-    //TODO ここはset_show_isbnメソッドだけにして、クラスはcomputedにする
     show_reset(){
       this.show_isbn = null;
-      this.detail_panel_layer_class.open = false;
       
     },
     show_detail(isbn){
       this.show_isbn = isbn
-      this.detail_panel_layer_class.open = true;
+      this.load_ndc_code()
     },
     
     // 編集機能への連携用
