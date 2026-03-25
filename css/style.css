@@ -17,7 +17,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 13rem;
+    height: 12rem;
     width: calc(100% - 2rem);
     position: fixed;
     top: 0;
@@ -44,6 +44,7 @@ body {
   
     #sort_editor {
         transition: background-color 0.5s ease; /* 0.5秒かけて色を変化 */
+        height: 1.5rem;
         
         label {
             font-size: 14px;
@@ -92,6 +93,7 @@ body {
     }
   
     #text_panel {
+        transition: background-color 0.5s ease; /* 0.5秒かけて色を変化 */
         
         input {
             border: none;
@@ -159,7 +161,7 @@ body {
 
 /* グリッド */
 #booklet {
-    margin-top: 15rem;
+    margin-top: 14rem;
     display: grid;
     width: calc(100% - 20px);
     grid-template-columns: repeat(auto-fill, 90px);
