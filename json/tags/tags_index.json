@@ -14,6 +14,13 @@
         "json/tags/tags_002_000.json"
       ]
     },
+    "007:ジャーナリズム・新聞": {
+      "page_num": 1,
+      "tag": "007:ジャーナリズム・新聞",
+      "pages": [
+        "json/tags/tags_007_000.json"
+      ]
+    },
     "023:図書の製作": {
       "page_num": 1,
       "tag": "023:図書の製作",
@@ -51,6 +58,13 @@
         "json/tags/tags_164_001.json"
       ]
     },
+    "288:個人伝記": {
+      "page_num": 1,
+      "tag": "288:個人伝記",
+      "pages": [
+        "json/tags/tags_288_000.json"
+      ]
+    },
     "310:政治": {
       "page_num": 1,
       "tag": "310:政治",
@@ -79,11 +93,68 @@
         "json/tags/tags_335_000.json"
       ]
     },
+    "336:経営学": {
+      "page_num": 2,
+      "tag": "336:経営学",
+      "pages": [
+        "json/tags/tags_336_000.json",
+        "json/tags/tags_336_001.json"
+      ]
+    },
     "361:社会心理": {
       "page_num": 1,
       "tag": "361:社会心理",
       "pages": [
         "json/tags/tags_361_000.json"
+      ]
+    },
+    "382:世界民俗学": {
+      "page_num": 1,
+      "tag": "382:世界民俗学",
+      "pages": [
+        "json/tags/tags_382_000.json"
+      ]
+    },
+    "388:民話・伝説": {
+      "page_num": 1,
+      "tag": "388:民話・伝説",
+      "pages": [
+        "json/tags/tags_388_000.json"
+      ]
+    },
+    "430:化学": {
+      "page_num": 1,
+      "tag": "430:化学",
+      "pages": [
+        "json/tags/tags_430_000.json"
+      ]
+    },
+    "451:地質学": {
+      "page_num": 1,
+      "tag": "451:地質学",
+      "pages": [
+        "json/tags/tags_451_000.json"
+      ]
+    },
+    "468:生物地理": {
+      "page_num": 1,
+      "tag": "468:生物地理",
+      "pages": [
+        "json/tags/tags_468_000.json"
+      ]
+    },
+    "486:両生類・爬虫類": {
+      "page_num": 1,
+      "tag": "486:両生類・爬虫類",
+      "pages": [
+        "json/tags/tags_486_000.json"
+      ]
+    },
+    "673:流通": {
+      "page_num": 1,
+      "tag": "673:流通",
+      "pages": [
+        "json/tags/tags_673_000.json"
       ]
     },
     "675:広告": {
@@ -100,6 +171,13 @@
         "json/tags/tags_780_000.json"
       ]
     },
+    "812:文字": {
+      "page_num": 1,
+      "tag": "812:文字",
+      "pages": [
+        "json/tags/tags_812_000.json"
+      ]
+    },
     "879:その他": {
       "page_num": 1,
       "tag": "879:その他",
@@ -112,6 +190,20 @@
       "tag": "913:小説",
       "pages": [
         "json/tags/tags_913_000.json"
+      ]
+    },
+    "929:近隣諸国文学": {
+      "page_num": 1,
+      "tag": "929:近隣諸国文学",
+      "pages": [
+        "json/tags/tags_929_000.json"
+      ]
+    },
+    "952:戯曲": {
+      "page_num": 1,
+      "tag": "952:戯曲",
+      "pages": [
+        "json/tags/tags_952_000.json"
       ]
     }
   }
