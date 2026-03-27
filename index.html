@@ -298,7 +298,7 @@
         <div id="ctrl_panel">
           <div 
             class="edit_btn" 
-            v-if="book_detail.system_type = 'notion'"
+            v-if="book_detail.system_type = 'notion' && params['mode'] == 'admin'"
              @click.self="open_notion(book_detail.external_book_id)">
             編集
           </div>

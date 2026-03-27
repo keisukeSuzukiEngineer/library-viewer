@@ -1,8 +1,13 @@
 const { createApp } = Vue;
 
+const params = Object.fromEntries(new URLSearchParams(window.location.search));
+
+console.log(params)
+
 Vue.createApp({
   data() {
     return {
+      params: params,
       // 検索パネル用
       // lastScrollY: 0,
       searchText: "",
@@ -275,8 +280,13 @@ Vue.createApp({
     set_events(){
       window.addEventListener(
       "scroll",
-      () => {
-          this.query_pane_close()
+      (e) => {
+          let isInputFocused = false
+          if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+            isInputFocused = true;
+          }
+          
+          if(!isInputFocused)this.query_pane_close()
         }, 
         { passive: true }
       );
