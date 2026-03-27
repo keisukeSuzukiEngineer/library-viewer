@@ -4,12 +4,14 @@ Vue.createApp({
   data() {
     return {
       // 検索パネル用
-      lastScrollY: 0,
+      // lastScrollY: 0,
       searchText: "",
+      tagText:"",
       matched_words_isbns: [],
+      matched_tags_isbns: [],
       query_panel:{
-        is_loading: true,
-        offset_y: 0,
+        is_open: false,
+        // offset_y: 0,
         sort_editor:{
           stat: "wait",
           class:{
@@ -19,6 +21,14 @@ Vue.createApp({
           }
         },
         text_panel:{
+          stat: "wait",
+          class:{
+            wait: true,
+            loading:false,
+            standby:false
+          }
+        },
+        tab_panel:{
           stat: "wait",
           class:{
             wait: true,
@@ -42,6 +52,9 @@ Vue.createApp({
         has_char:null,
       },
       booksByIsbn: {},
+      booklet: {
+        is_slide_bottom: false
+      },
 
       // 詳細表示用
       show_isbn: null,
@@ -83,19 +96,22 @@ Vue.createApp({
       
     },
     tag_match_isbns(){
-      if (!this.tagsOrders || !this.tagsOrders.selected || this.tagsOrders.selected.length <= 0) return []
+      if (!this.matched_tags_isbns) return []
       
-      const isbns = new Set(
-        this.tagsOrders.selected
-          .flatMap(token => [...this.tagsOrders.indexs[token]] || [])
-      );
+      const isbns = set_and_merge(
+          this.matched_tags_isbns
+          .filter(tag_isbns=>{
+              return Boolean(tag_isbns['isbns']) && tag_isbns['selected'] && !tag_isbns['disable']
+          })
+          .map(tag_isbns=>tag_isbns['isbns'])
+        )
       // console.log("token isbns:", isbns)
       return isbns;
       
     },
     visibleIsbns(){
       // 1. 並び順（ISBN配列）
-      // console.log("call visibleBooks")
+      console.log("call visibleBooks")
       
       if(!this.sortOrders){
         // console.log("retuen visibleBooks prev_load_pattorn", Array(24).fill(""))
@@ -107,27 +123,27 @@ Vue.createApp({
       // console.log("sorted isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
-      // console.log("this.token_match_isbns: ", this.token_match_isbns)
-      if(this.matched_words_isbns.length > 0){
+      console.log("this.token_match_isbns: ", this.token_match_isbns)
+      if(this.token_match_isbns.size > 0){
         isbns = isbns.filter(isbn => this.token_match_isbns.has(isbn));
       }
-      // console.log("tokened isbns.length: ", isbns.length)
+      console.log("tokened isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
-      // console.log(this.tag_match_isbns)
+      console.log("this.tag_match_isbns", this.tag_match_isbns)
       if(this.tag_match_isbns.size > 0){
         isbns = isbns.filter(isbn => this.tag_match_isbns.has(isbn));
       }
-      // console.log("taged isbns.length: ", isbns.length)
+      console.log("taged isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
       return isbns;
     },
     
     // 検索パネル表示関係
-    query_panel_style(){
+    query_layer_class(){
         return {
-            transform: `translateY(-${this.query_panel.offset_y}px)`
+            open: this.query_panel.is_open
         }
     },
     sort_editor_class(){
@@ -157,11 +173,38 @@ Vue.createApp({
           standby:stat == "standby"
       }
     },
+    tag_panel_class(){
+      const stat = this.query_panel.tab_panel.stat
+      return {
+          wait: stat == "wait",
+          loading:stat == "loading",
+          standby:stat == "standby"
+      }
+    },
     token_results(){
-      // console.log("call token_results")
-      if(!this.matched_words_isbns)return [];
+      // console.log("call token_results", !this.matched_tags_isbns)
+      if(!this.matched_tags_isbns && !this.matched_words_isbns)return [];
       // console.log(this.matched_words_isbns)
-      return this.matched_words_isbns
+      console.log()
+      tabs = [
+        
+        ...this.matched_tags_isbns
+        .filter(tag_isbns=>{
+            return Boolean(tag_isbns['isbns'] && tag_isbns['selected'])
+        })
+        .map(tag_isbns=>{
+          return {
+            "tag": tag_isbns['tag'],
+            "text": `${tag_isbns['tag']}: ${tag_isbns['isbns'].size}`,
+            "class":{
+              "token_result": true,
+              "disable": tag_isbns.disable
+            }
+          
+          }
+        }),
+        
+        ...this.matched_words_isbns
         .map(word_isbns=>{
           return {
             "token": word_isbns['token'],
@@ -173,6 +216,16 @@ Vue.createApp({
           
           }
         })
+      ]
+      // console.log(tabs)
+      return tabs
+    },
+    
+    //本棚関連
+    booklet_class(){
+      return {
+        "slide_bottom": this.booklet.is_slide_bottom
+      }
     },
       
     // 詳細画面関係
@@ -214,7 +267,6 @@ Vue.createApp({
     this.set_events();
     await this.loadIndex();
     await this.loadSorts(def_only=true);
-    this.query_pane_open();
     this.change_search_text(); // 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
   },
 
@@ -224,17 +276,7 @@ Vue.createApp({
       window.addEventListener(
       "scroll",
       () => {
-          crrScroolY = window.scrollY;
-          if(crrScroolY < 0 || document.documentElement.scrollHeight < crrScroolY)return;
-          this.query_panel.offset_y = Math.max(
-            0,
-            Math.min(
-              this.query_panel.offset_y + crrScroolY - this.lastScrollY,
-              this.$refs.query_panel.getBoundingClientRect().height
-            )
-          )
-          // console.log(this.query_panel.offset_y)
-          this.lastScrollY = crrScroolY;
+          this.query_pane_close()
         }, 
         { passive: true }
       );
@@ -286,7 +328,7 @@ Vue.createApp({
       // console.log("call loadTokens")
       if(this.tokenOrders){
         // console.log("skip loadTokens")
-        this.loadAnarizer();
+        this.loadTextAnarizer();
         return
       }
       
@@ -307,20 +349,28 @@ Vue.createApp({
         )
       }
       
-      this.loadAnarizer();
+      this.loadTextAnarizer();
     },
     async loadTags(){
-      // console.log("call loadTags")
+      console.log("call loadTags")
       if(this.tokenOrders)return
       
       const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
       this.tagsOrders = {
         "selected": [],
         // "selected": ["100"],
-        "indexs": await this.loadAllPagesParallel(tagsIndex.indexs)
+          "indexs": Object.fromEntries(
+                      Object.entries(await this.loadAllPagesParallel(tagsIndex.indexs))
+                        .map(([tag, isbns]) => [
+                        tag,
+                        new Set(isbns)
+                      ])
+                    )
       }
+      
+      this.loadTagAnalyzer()
     },
-    loadAnarizer() {
+    loadTextAnarizer() {
       // console.log("call loadAnarizer", this.trie)
       if(this.trie.has_char){
         // console.log("skip loadAnarizer")
@@ -362,6 +412,23 @@ Vue.createApp({
       // console.log(this.tokenOrders.indexScores[has_char['あ'][0]])
       // console.log([...has_char['あ']].map(word_char=>this.tokenOrders.indexScores[word_char]))
       this.trie.has_char = has_char;
+    },
+    loadTagAnalyzer(){
+      if(this.trie.has_tag_char){
+        console.log("skip loadAnarizer")
+        return
+      }
+      
+      //特定後の文字を含む単語の一覧
+      const has_char = {}
+      for (const word of Object.keys(this.tagsOrders.indexs)) {
+        // console.log(word)
+        for (const word_char of word) {
+            has_char[word_char] ||= new Set();
+            has_char[word_char].add(word)
+        }
+      }
+      this.trie.has_tag_char = has_char;
     },
     async loadAllPagesParallel(indexs, isbnIsSet = false) {
       const result = {};
@@ -520,20 +587,55 @@ Vue.createApp({
       
       return [match_words, candidate_words]
     },
+    
+    //tagの検索用
+    match_tags_search(orijin_text){
+      
+      if(!this.trie.has_tag_char || !orijin_text)return new Set()
+        
+      console.log(orijin_text.split(""))
+      tags = set_and_merge(
+          orijin_text.split("")
+          .map(text_char => this.trie.has_tag_char[text_char])
+      )
+      
+      return tags
+    },
 
     //検索用パネル操作用
-    query_pane_open(){
-      this.query_panel.is_loading = false;
+    query_pane_close(){
+      this.query_panel.is_open = false;
+      this.booklet.is_slide_bottom = false;
+    },
+    query_pane_toggle(){
+      this.query_panel.is_open = !this.query_panel.is_open;
+      this.booklet.is_slide_bottom = !this.booklet.is_slide_bottom;
+      
+      this.sort_setting()
+      this.text_panel_setting()
+      this.tag_panel_setting()
     },
     click_token_result(token_result){
       // console.log("call click_token_result", token_result)
       // console.log(this.matched_words_isbns[0])
-      const target_index = this.matched_words_isbns
-      .findIndex(matched_word_isbns=>matched_word_isbns['token'] == token_result['token'])
+      if("token" in token_result){
+        const target_index = this.matched_words_isbns
+        .findIndex(matched_word_isbns=>matched_word_isbns['token'] == token_result['token'])
+        
+        this.matched_words_isbns[target_index] = {
+          ...this.matched_words_isbns[target_index],
+          "disable": !this.matched_words_isbns[target_index]["disable"]
+        }
+      }
       
-      this.matched_words_isbns[target_index] = {
-        ...this.matched_words_isbns[target_index],
-        "disable": !this.matched_words_isbns[target_index]["disable"]
+      else if("tag" in token_result){
+        const target_index = this.matched_tags_isbns
+        .findIndex(matched_tag_isbns=>matched_tag_isbns['tag'] == token_result['tag'])
+        
+        this.matched_tags_isbns[target_index] = {
+          ...this.matched_tags_isbns[target_index],
+          "disable": !this.matched_tags_isbns[target_index]["disable"]
+        }
       }
       
       // console.log(this.matched_words_isbns[0])
@@ -572,8 +674,39 @@ Vue.createApp({
       
       this.matched_words_isbns = words_isbns
     },
+    change_tag_text(){
+      const match_tags = this.match_tags_search(this.tagText);
+      
+      // console.log(this.searchText, "->", match_tags, candidate_words)
+        
+      if(!match_tags || match_tags.length  <= 0){
+        this.matched_tags_isbns = []
+        return
+      }
+      
+      console.log(match_tags)
+      const tags_isbns = [...match_tags]
+        .map(
+          tag => {
+            return {
+              "tag": tag,
+              "isbns": this.tagsOrders.indexs[tag],
+              "selected": false, // 検索中の候補として出すlistで使う
+              "disable": false, // 検索語のタブで使う
+              "use_child": false
+            }
+          }
+        )
+      
+      this.matched_tags_isbns = tags_isbns
+    },
+    click_tag_list(tag_isbns){
+        tag_isbns['selected'] = !tag_isbns['selected']
+    },
     async sort_setting(){
       // console.log("call sort_setting")
+      if(this.query_panel.sort_editor.stat == "standby")return;
+      
       this.query_panel.sort_editor.stat = "loading"
       
       await this.loadSorts()
@@ -582,11 +715,21 @@ Vue.createApp({
     },
     async text_panel_setting(){
       // console.log("call sort_setting")
+      if(this.query_panel.text_panel.stat == "standby")return;
       this.query_panel.text_panel.stat = "loading"
           
       await this.loadTokens()
           
       this.query_panel.text_panel.stat = "standby"
+    },
+    async tag_panel_setting(){
+      console.log("call tag_setting")
+      if(this.query_panel.tab_panel.stat == "standby")return;
+      this.query_panel.text_panel.stat = "loading"
+          
+      await this.loadTags()
+          
+      this.query_panel.tab_panel.stat = "standby"
     },
     
     //詳細表示パネル操作用

@@ -2,58 +2,116 @@
   "indexs": {
     "-": {
       "page_num": 1,
-      "sort_key": "-",
+      "tag": "-",
       "pages": [
         "json/tags/tags_-_000.json"
       ]
     },
-    "000": {
+    "002:叢書・全集": {
       "page_num": 1,
-      "sort_key": "000",
+      "tag": "002:叢書・全集",
       "pages": [
-        "json/tags/tags_000_000.json"
+        "json/tags/tags_002_000.json"
       ]
     },
-    "100": {
+    "023:図書の製作": {
       "page_num": 1,
-      "sort_key": "100",
+      "tag": "023:図書の製作",
       "pages": [
-        "json/tags/tags_100_000.json"
+        "json/tags/tags_023_000.json"
       ]
     },
-    "300": {
+    "141:夢・催眠": {
       "page_num": 1,
-      "sort_key": "300",
+      "tag": "141:夢・催眠",
       "pages": [
-        "json/tags/tags_300_000.json"
+        "json/tags/tags_141_000.json"
       ]
     },
-    "600": {
+    "147:心理測定": {
       "page_num": 1,
-      "sort_key": "600",
+      "tag": "147:心理測定",
       "pages": [
-        "json/tags/tags_600_000.json"
+        "json/tags/tags_147_000.json"
       ]
     },
-    "700": {
-      "page_num": 1,
-      "sort_key": "700",
+    "159:個人の哲学・人生訓": {
+      "page_num": 2,
+      "tag": "159:個人の哲学・人生訓",
       "pages": [
-        "json/tags/tags_700_000.json"
+        "json/tags/tags_159_000.json",
+        "json/tags/tags_159_001.json"
       ]
     },
-    "800": {
-      "page_num": 1,
-      "sort_key": "800",
+    "164:神話・神話学": {
+      "page_num": 2,
+      "tag": "164:神話・神話学",
       "pages": [
-        "json/tags/tags_800_000.json"
+        "json/tags/tags_164_000.json",
+        "json/tags/tags_164_001.json"
       ]
     },
-    "900": {
+    "310:政治": {
       "page_num": 1,
-      "sort_key": "900",
+      "tag": "310:政治",
       "pages": [
-        "json/tags/tags_900_000.json"
+        "json/tags/tags_310_000.json"
+      ]
+    },
+    "311:政治学": {
+      "page_num": 1,
+      "tag": "311:政治学",
+      "pages": [
+        "json/tags/tags_311_000.json"
+      ]
+    },
+    "319:国際政治": {
+      "page_num": 1,
+      "tag": "319:国際政治",
+      "pages": [
+        "json/tags/tags_319_000.json"
+      ]
+    },
+    "335:経営・管理": {
+      "page_num": 1,
+      "tag": "335:経営・管理",
+      "pages": [
+        "json/tags/tags_335_000.json"
+      ]
+    },
+    "361:社会心理": {
+      "page_num": 1,
+      "tag": "361:社会心理",
+      "pages": [
+        "json/tags/tags_361_000.json"
+      ]
+    },
+    "675:広告": {
+      "page_num": 1,
+      "tag": "675:広告",
+      "pages": [
+        "json/tags/tags_675_000.json"
+      ]
+    },
+    "780:スポーツ・体育": {
+      "page_num": 1,
+      "tag": "780:スポーツ・体育",
+      "pages": [
+        "json/tags/tags_780_000.json"
+      ]
+    },
+    "879:その他": {
+      "page_num": 1,
+      "tag": "879:その他",
+      "pages": [
+        "json/tags/tags_879_000.json"
+      ]
+    },
+    "913:小説": {
+      "page_num": 1,
+      "tag": "913:小説",
+      "pages": [
+        "json/tags/tags_913_000.json"
       ]
     }
   }

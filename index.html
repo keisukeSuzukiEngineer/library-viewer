@@ -11,84 +11,105 @@
 </head>
 <body>
   <div id="app">
-    <div id="query_panel" ref="query_panel" :style="query_panel_style">
-      <div 
-        id="query_loading" 
-        v-if="query_panel.is_loading" 
-        style="display:none;" 
-        :style="{'display':'block'}"
-      >
-      loading...
-      </div>
-      <div id="title" v-if="!query_panel.is_loading">
+  
+    <div id="title" @click="query_pane_toggle()">
+      <div class="query_itm">
         My Booklet
       </div>
-      <div 
-        id="sort_editor" 
-        :class="sort_editor_class"
-        v-if="!query_panel.is_loading"
-        @click="sort_setting()"
-      >
-        <span>並替: </span>
-        <select 
-          v-model="sortOrders.key"
-          id="key_select"
-          :class="sort_editor_select_class"
-        >
-          <option 
-            v-for="item in sortOrders.key_select" 
-            :key="item.val" 
-            :value="item.val"
-          >
-            {{ item.label }}
-          </option>
-        </select>
-        <select 
-          v-model="sortOrders.order"
-          id="order_select"
-          :class="sort_editor_select_class"
-        >
-          <option 
-            v-for="item in sortOrders.order_select" 
-            :key="item.val" 
-            :value="item.val"
-          >
-            {{ item.label }}
-          </option>
-        </select>
-      </div>
-      <div 
-        id="text_panel" 
-        v-if="!query_panel.is_loading"
-        :class="text_panel_class"
-        @click="text_panel_setting()"
-      >
-        検索: <input 
-          type="text" 
-          v-model="searchText"
-          @change="change_search_text"
-          :class="text_panel_input_class"
-          />
-      </div>
-      <div id="text_result" v-if="!query_panel.is_loading">
-        <span
-          style="color:rgba(0,0,0,0);"
-          :style="{'color':'black'}"
-        >
-          {{visibleIsbns.length}} / {{sort_match_isbns.length}} 冊表示　
-        </span>
-        <span 
-          v-for="token_result in token_results" 
-          :class="token_result['class']"
-           @click="click_token_result(token_result)"
-          style="color:rgba(0,0,0,0)"
-          :style="{'color':'black'}"
-         >
-          {{token_result['text']}}
-        </span>
-      </div>
     </div>
-    <main id="booklet">
+    <div id="query_layer" :class="query_layer_class">
+      <div id="query_panel" ref="query_panel">
+        <div 
+          id="sort_editor" 
+         class="query_itm"
+          :class="sort_editor_class"
+          v-if="sortOrders"
+        >
+          <span>並替: </span>
+          <select 
+            v-model="sortOrders.key"
+            id="key_select"
+            :class="sort_editor_select_class"
+          >
+            <option 
+              v-for="item in sortOrders.key_select" 
+              :key="item.val" 
+              :value="item.val"
+            >
+              {{ item.label }}
+            </option>
+          </select>
+          <select 
+            v-model="sortOrders.order"
+            id="order_select"
+            :class="sort_editor_select_class"
+          >
+            <option 
+              v-for="item in sortOrders.order_select" 
+              :key="item.val" 
+              :value="item.val"
+            >
+              {{ item.label }}
+            </option>
+          </select>
+        </div>
+        <div 
+          id="text_panel" 
+          class="query_itm"
+          v-if="!query_panel.is_loading"
+          :class="text_panel_class"
+        >
+          検索: <input 
+            type="text" 
+            v-model="searchText"
+            @change="change_search_text"
+            :class="text_panel_input_class"
+            />
+        </div>
+        <div 
+          id="tag_panel" 
+          class="query_itm"
+          v-if="!query_panel.is_loading"
+          :class="tag_panel_class"
+        >
+          タブ: <input 
+            type="text" 
+            v-model="tagText"
+            @change="change_tag_text"
+            :class="tag_panel_input_class"
+            />
+            <ul>
+              <li 
+                v-for="matched_tag_isbns in matched_tags_isbns"
+                @click="click_tag_list(matched_tag_isbns)"
+              >
+              {{matched_tag_isbns['tag']}}
+              </li>
+            </ul>
+        </div>
+        <div id="text_result" class="query_itm" v-if="!query_panel.is_loading">
+          <span
+            style="color:rgba(0,0,0,0);"
+            :style="{'color':'black'}"
+          >
+            {{visibleIsbns.length}} / {{sort_match_isbns.length}} 冊表示　
+          </span>
+          <div id="tab_area">
+            <span 
+              v-for="token_result in token_results" 
+              :class="token_result['class']"
+               @click="click_token_result(token_result)"
+              style="color:rgba(0,0,0,0)"
+              :style="{'color':'black'}"
+             >
+              {{token_result['text']}}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id="query_panel_opener" @click="query_pane_toggle()"></div>
+    </div>
+    <main id="booklet" :class="booklet_class">
       <div
         v-for="isbn in visibleIsbns"
         :key="isbn"
