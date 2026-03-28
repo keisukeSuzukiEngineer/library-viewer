@@ -141,6 +141,8 @@ body {
       
         #tag_panel {
             transition: background-color 0.5s ease; /* 0.5秒かけて色を変化 */
+            position: relative;
+            overflow: visible;
             
             input {
                 border: none;
@@ -169,6 +171,29 @@ body {
                 content: "loading...";
                 animation: blinking 1s ease-in-out infinite alternate;
               }
+            }
+            
+            ul{
+                visibility: hidden;
+                margin: 0;
+                padding: 0 0.5rem;
+                list-style-type: none;
+                position: absolute;
+                top: 100%;
+                z-index: 5;
+                border: 1px black solid;
+                border: black;
+                width: calc(100% - 6rem);
+                left: 3rem;
+                border-radius: 1rem;
+                
+                li{
+                  padding: 2px;
+                }
+            }
+            
+            &:hover ul{
+                visibility: visible;
             }
         }
         
@@ -269,7 +294,10 @@ body {
         cursor: pointer;
         
         .loading{
-            margin-bottom: 70%;
+            height: 100%;
+            background: linear-gradient(270deg, #666, #999);
+            background-size: 200% 200%;
+            animation: Grad 5s ease infinite;
         }
         
         .cover {
@@ -284,98 +312,119 @@ body {
 
 }
 
+@keyframes Grad {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
 #detail_panel_layer{
-    display: none;
+    /* display: none; */
+    visibility: hidden;
     position: fixed;
     top: 0;
     width:100vw;
     height: 100vh;
     background-color: rgb(50 50 50 / 0.5);
+    transition: all 0.5s ease;
+    opacity: 0;
     
     &.open{
-        display: block;
-    }
-}
-#detail_panel{
-    margin: 10vh auto;
-    width: 80vw;
-    max-width: 1500px;
-    height: 80%;
-    padding: 10px;
-    background: lightgray;
-    display: grid;
-    grid-template-areas:
-        "cover ctrl_panel"
-        "cover main_data"
-        "long_data long_data";
-    grid-template-columns: minmax(160px, 30%) auto;
-    grid-template-rows: 1.5rem calc(50% - 1.5rem) auto;
-    gap: 10px;
-  
-    img.book_cover{
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        grid-area:cover;
+        /* display: block; */
+       opacity: 1;
+       visibility: visible;
+       
+       #detail_panel{
+          margin: 10vh auto;
+       }
     }
     
-    #ctrl_panel{
-        grid-area:ctrl_panel;
-        width: 100%;
-        height: 100%;
-        text-align: right;
-        
-        *{
-            display: inline-block;
-            border-radius: 0.3rem;
-            padding: 0 1rem;
-            margin-left: 1rem;
-            cursor: pointer;
+    #detail_panel{
+        margin: 8vh auto;
+        width: 75vw;
+        max-width: 1500px;
+        height: 80%;
+        padding: 20px;
+        padding-top: 5px;
+        background-image: url(./../img/detail_head.jpeg), url(./../img/detail_back.jpeg);
+        background-size: 100% 1.7rem, 100% calc(100% - 1.6rem);
+        background-repeat: no-repeat;
+        background-position-y: 0, 1.6rem;
+        display: grid;
+        grid-template-areas:
+            "ctrl_panel ctrl_panel"
+            "cover main_data"
+            "long_data long_data";
+        grid-template-columns: minmax(160px, 30%) auto;
+        grid-template-rows: 1.5rem calc(50% - 1.5rem) auto;
+        gap: 10px;
+        transition: all 0.5s ease;
+      
+        img.book_cover{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            grid-area:cover;
         }
         
-        .close_btn{
-            background-color: red;
+        #ctrl_panel{
+            grid-area:ctrl_panel;
+            width: 100%;
+            height: 100%;
+            text-align: right;
+            
+            *{
+                display: inline-block;
+                border-radius: 0.3rem;
+                padding: 0 1rem;
+                margin-left: 0.5rem;
+                cursor: pointer;
+            }
+            
+            .close_btn{
+                background-color: red;
+            }
+            .edit_btn{
+                background-color: gray;
+            }
         }
-        .edit_btn{
-            background-color: gray;
-        }
-    }
-    
-    #main_data{
-        display:inline-block;
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll;
-        grid-area:main_data;
-        text-align: left;
         
-        *{
+        #main_data{
+            display:inline-block;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            grid-area:main_data;
+            text-align: left;
+            
+            *{
+                display: block;
+            }
+            
+            th{
+                position: sticky;
+                top: 0;
+                backdrop-filter: blur(4px); 
+            }
+        }
+        
+        #long_data{
             display: block;
-        }
-        
-        th{
-            position: sticky;
-            top: 0;
-            background: lightgray;
-        }
-    }
-    
-    #long_data{
-        display: block;
-        text-align: left;
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll;
-        white-space: pre-line;
-        grid-area:long_data;
-        
-        *{
-            display: block;
-        }
-        th{
-            position: sticky;
-            top: 0;
-            background: lightgray;
+            text-align: left;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            white-space: pre-line;
+            grid-area:long_data;
+            
+            *{
+                display: block;
+            }
+            th{
+                position: sticky;
+                top: 0;
+                backdrop-filter: blur(4px); 
+            }
         }
     }
 }

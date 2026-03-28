@@ -2,7 +2,7 @@ const { createApp } = Vue;
 
 const params = Object.fromEntries(new URLSearchParams(window.location.search));
 
-console.log(params)
+// console.log(params)
 
 Vue.createApp({
   data() {
@@ -63,6 +63,7 @@ Vue.createApp({
 
       // 詳細表示用
       show_isbn: null,
+      detail_open: false,
       ndc_codes: null,
     };
   },
@@ -116,7 +117,7 @@ Vue.createApp({
     },
     visibleIsbns(){
       // 1. 並び順（ISBN配列）
-      console.log("call visibleBooks")
+      // console.log("call visibleBooks")
       
       if(!this.sortOrders){
         // console.log("retuen visibleBooks prev_load_pattorn", Array(24).fill(""))
@@ -128,18 +129,18 @@ Vue.createApp({
       // console.log("sorted isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
-      console.log("this.token_match_isbns: ", this.token_match_isbns)
+      // console.log("this.token_match_isbns: ", this.token_match_isbns)
       if(this.token_match_isbns.size > 0){
         isbns = isbns.filter(isbn => this.token_match_isbns.has(isbn));
       }
-      console.log("tokened isbns.length: ", isbns.length)
+      // console.log("tokened isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
-      console.log("this.tag_match_isbns", this.tag_match_isbns)
+      // console.log("this.tag_match_isbns", this.tag_match_isbns)
       if(this.tag_match_isbns.size > 0){
         isbns = isbns.filter(isbn => this.tag_match_isbns.has(isbn));
       }
-      console.log("taged isbns.length: ", isbns.length)
+      // console.log("taged isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
       return isbns;
@@ -236,31 +237,32 @@ Vue.createApp({
     // 詳細画面関係
     detail_panel_layer_class(){
       return {
-        "open": this.show_isbn,
+        "open": this.detail_open,
       }
     },
     book_detail(){
+        if(!this.show_isbn)return {}
         const book = this.booksByIsbn[this.show_isbn].record;
         
         let ndc = book['ndc']
         if(this.ndc_codes){
           const record = this.ndc_codes[ndc.split(".")[0]]
-          console.log(record, book.ndc_version)
+          // console.log(record, book.ndc_version)
           if(record){
-            console.log(record, book.ndc_version)
+            // console.log(record, book.ndc_version)
             ndc += `:${record['ndc'+book.ndc_version+'_name']}`
           }
         }
         
         // booksByIsbnの汚染を防ぐため、bookを直接編集することはしない
-        console.log({
-          ...book,
-          'ndc': ndc,
-        })
-        console.log({
-          ...book,
-          'ndc': ndc,
-        }['updated_at'])
+        // console.log({
+          // ...book,
+          // 'ndc': ndc,
+        // })
+        // console.log({
+          // ...book,
+          // 'ndc': ndc,
+        // }['updated_at'])
         return {
           ...book,
           'ndc': ndc,
@@ -362,7 +364,7 @@ Vue.createApp({
       this.loadTextAnarizer();
     },
     async loadTags(){
-      console.log("call loadTags")
+      // console.log("call loadTags")
       if(this.tokenOrders)return
       
       const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
@@ -472,8 +474,19 @@ Vue.createApp({
       const book = await fetch(`json/books/book_${isbn}.json`)
         .then(r => r.json());
 
+      // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
       // 取れた瞬間に画面更新
-      this.booksByIsbn[isbn] = book;
+      this.booksByIsbn[isbn] = {
+        ...book,
+        stat: 'loaded'
+      };
+      // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
+    },
+    load_book_cover(isbn){
+      this.booksByIsbn[isbn] = {
+        ...this.booksByIsbn[isbn],
+        stat: 'imgLoaded'
+      }
     },
     registerBookEl(isbn, el) {
       if (!el) return;
@@ -603,7 +616,7 @@ Vue.createApp({
       
       if(!this.trie.has_tag_char || !orijin_text)return new Set()
         
-      console.log(orijin_text.split(""))
+      // console.log(orijin_text.split(""))
       tags = set_and_merge(
           orijin_text.split("")
           .map(text_char => this.trie.has_tag_char[text_char])
@@ -694,7 +707,7 @@ Vue.createApp({
         return
       }
       
-      console.log(match_tags)
+      // console.log(match_tags)
       const tags_isbns = [...match_tags]
         .map(
           tag => {
@@ -711,6 +724,7 @@ Vue.createApp({
       this.matched_tags_isbns = tags_isbns
     },
     click_tag_list(tag_isbns){
+        console.log("call click_tag_list")
         tag_isbns['selected'] = !tag_isbns['selected']
     },
     async sort_setting(){
@@ -733,7 +747,7 @@ Vue.createApp({
       this.query_panel.text_panel.stat = "standby"
     },
     async tag_panel_setting(){
-      console.log("call tag_setting")
+      // console.log("call tag_setting")
       if(this.query_panel.tab_panel.stat == "standby")return;
       this.query_panel.text_panel.stat = "loading"
           
@@ -744,11 +758,16 @@ Vue.createApp({
     
     //詳細表示パネル操作用
     show_reset(){
-      this.show_isbn = null;
-      
+      const tmp_isbn = this.show_isbn;
+      this.detail_open = false;
+      setTimeout(() => {
+        // 待機中にほかのisbnを表示していた場合を考慮
+        if(tmp_isbn == this.show_isbn)this.show_isbn = null;
+      }, 60);
     },
     show_detail(isbn){
       this.show_isbn = isbn
+      this.detail_open = true
       this.load_ndc_code()
     },
     
@@ -760,6 +779,7 @@ Vue.createApp({
 }).mount("#app");
 
 function set_and_merge(sets){
+  // console.log(sets)
   const [first_set, ...rest_sets] = sets.sort((a, b) => a.size - b.size);
   
   // console.log(first_isbns)

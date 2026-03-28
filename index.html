@@ -117,182 +117,124 @@
         :data-isbn="isbn"
         :ref="el => register_observe(el)"
       >
+      <!-- {{(booksByIsbn[isbn]??{}).loaded}}{{!(booksByIsbn[isbn]??{}).loaded}} -->
         <img 
-          v-if="booksByIsbn[isbn]" 
+          :src="booksByIsbn[isbn].record.cover_url" 
+          style="display:none;"
+          v-if="(booksByIsbn[isbn]??{}).stat == 'loaded'"
+          @load="load_book_cover(isbn)"
+        >
+        <img 
+           v-if="(booksByIsbn[isbn]??{}).stat == 'imgLoaded'"
           class="cover" 
           :src="booksByIsbn[isbn].record.cover_url" 
           @click.stop="show_detail(isbn)"
           style="display:none;" 
           :style="{'display':'block'}"
         />
-        <div class="loading" v-else>
-          <span>Loading</span>
-          <span
-          style="display:none"
-          :style="{'display':'block'}"
-          > {{ isbn }}</span>
-          <span>...</span>
-        </div>
+        <div class="loading" v-if="(booksByIsbn[isbn]??{}).stat != 'imgLoaded'" ></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
       <div v-if="false" class="book-card">
-        <div class="loading">
-          Loading ...
-        </div>
+        <div class="loading"></div>
       </div>
     </main>
     <div 
       id="detail_panel_layer" 
       :class="detail_panel_layer_class" 
-      v-if="show_isbn" 
       @click.self="show_reset()"
     >
     
-      <div id="detail_panel" @wheel.stop @touchmove.stop>
+      <div 
+        id="detail_panel" 
+        @wheel.stop @touchmove.stop
+      >
         <img class="book_cover" :src="book_detail.cover_url" />
         
         <div id="ctrl_panel">
