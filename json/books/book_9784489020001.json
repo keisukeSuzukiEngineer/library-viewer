@@ -1,0 +1,30 @@
+{
+  "record": {
+    "isbn": "9784489020001",
+    "booklet": "焦茶本棚",
+    "title": "入門はじめての多変量解析",
+    "title_source": "ndl",
+    "ndc": "417",
+    "ndc_source": "ndl",
+    "ndc_version": "9",
+    "ndc_version_source": "ndl",
+    "author": "石村, 貞夫, 1949-,石村, 光資郎,石村貞夫, 石村光資郎 著",
+    "author_source": "ndl",
+    "publisher": "東京図書",
+    "publisher_source": "ndl",
+    "pub_date": "2007",
+    "pub_date_source": "ndl",
+    "series": "",
+    "series_source": "",
+    "volume": "",
+    "volume_source": "",
+    "pages": "306",
+    "pages_source": "ndl",
+    "content": "はじめに\niv\nSection 1.1\n\n\n\nSection 1.2\n\n\nSection 1.3\n\n\nSection 1.4\n\n\nSection 1.5\n\n\nSection 1.6\n\n\nSection 1.7\n\n\nSection 1.8\n\n\n多変量解析は楽しい！\nWhat's 多変量解析？！\n重回帰分析のはなし\n主成分分析のはなし\n因子分析のはなし\n判別分析のはなし\nクラスター分析のはなし\n数量化理論のはなしここでちょっと復習！\n楽しさ実感！！\n公\n章\n章\nSection 2.1\nSection 2.2\nSection 2.3\nSection 2.4\nSection 2.5\nSection 2.6\nSection 2.7\nSection 2.8\nSection 2.9\nSection 2.10\nSection 2.11\n\n\n\nSection 3.1\n\n\nSection 3.2\n\n\nSection 3.3\n\n\nSection 3.4\n\n\nSection 3.5\n\n\nSection 3.6\n\n\nSection 3.7\n\n\nSection 3.8\n\n\nSection 3.9\n\n\nSection 3.10\n\n\nSection 3.11\n\n\nはじめての重回帰分析\n重回帰分析とは因果なもの？！\n重回帰式と重回帰モデル\n重回帰式を求めよう\nその重回帰式は因果関係をよく表していますか？…50\n偏回帰係数の意味するもの重回帰分析の検定\n：\n重回帰分析の推定\n...\n重回帰分析がいつもうまくゆくとは限らない\n多重共線性の問題点\nダミー変数の利用・回帰分析についてのその他の話題\n34\n36\n38\n56\n64\n68\n70\n78\n80\n82\nはじめての主成分分析\n主成分分析は総合化です！\n主成分とは？！...\n主成分の求め方（1）一\n情報損失量の最小化\n主成分を解釈する？\n寄与率と累積寄与率\n主成分得点を定義しよう\nこれは便利！\n主成分得点によるランキング\n第1主成分と第2主成分\n主成分の求め方（2）一分散の最大化\n主成分分析は単位の影響を受けます\n主成分分析についてのその他の話題\n86\n88\n91\n102\n104\n106\n108\n110\n112\n114\n118\n章\nSection 4.1\nSection 4.2\nSection 4.3\nSection 4.4\nSection 4.5\nSection 4.6\nSection 4.7\nSection 4.8\nSection 4.9\nSection 4.10\nSection 4.11\nSection 5.1\n判別分析とは判別するもの？！\nSection 5.2\n線型判別関数とは？\nSection 5.3\n判別得点とその変動\nSection 5.4\n3つの大切な変動\nSection 5.5\n線型判別関数の求め方\nSection 5.6\n判別得点と境界線の関係\nSection 5.7\n1変数のマハラノビスの距離\nSection 5.8\n2変数のマハラノビスの距離\nSection 5.9\n\nSection 5.10\n正答率と誤判別率\nはじめての\n因子分析\n因子分析で共通要因を？！\n因子分析のモデル式と因子の解釈\n因子分析の分散共分散行列\n主因子法による因子分析\n因子負荷の求め方の実際\n因子を回転する？！\n最尤法と1変数の尤度関数\n変数の尤度関数への一般化\n最尤法による因子負荷の求め方\n直交モデル・斜交モデルの分散分散行列・・・172\n最尤法とプロマックス回転の例…\n124\n128\n132\n138\n144\n154\n164\n168\n170\n173\nはじめての判別分析\nSw・SB・Srの計算\n178\n180\n184\n192\n196\n202\n204\n208\nマハラノビスの距離による境界線\n212\n214\n章\nSection 6.1\nSection 6.2\nSection 6.3\nSection 6.4\n章\n章\nSection 7.1\nSection 7.2\nSection 7.3\nSection 7.4\nSection 7.5\nSection 8.1\nSection 8.2\nSection 8.3\nSection 8.4\nSection 8.5\nはじめてのクラスター分析\n似ている！似ていない？\nクラスタ間の距離の決め方\nクラスター分析の手順は？\nデンドログラムの使い方・\n218\n222\n226\n236\nはじめての数量化I類\n数量化理論とは？・\n予測に役立つ数量化I類\n数量化I類の予測式の求め方\nカテゴリ数量の基準化\n数量化I類で美女のサイズをあてよう\n240\n242\n244\n248\n250\nはじめての数量化I類\n判別に役立つ数量化II類\n数量化II類の判別式の求め方\n数量化II類の判別式の利用法\nカテゴリ数量の基準化・数量化II類で血液型をあてよう\n256\n258\n262\n264\n266\nつ\nSection 9.1\nSection 9.2\nSection 9.3\nSection 9.4\nSection 9.5\n付録：数表\n参考文献\n索引\nはじめての数量化I類\n分類や特性を知る数量化II類\n276\nカテゴリ数量・サンプルスコアの求め方\n278\nカテゴリ数量・サンプルスコアを読む\n284\n数量化I類でわかる女子学生のお酒の好み…\n286\n数量化I類でわかる血液型の特性\n292\n295\n298\n301",
+    "system_type": "notion",
+    "external_book_id": "332749de-9a26-81e9-8b2b-e4ce6f68b7b6",
+    "created_at": "2026-03-29 23:28:31",
+    "updated_at": "2026-03-29 23:28:31",
+    "cover_url": "cover/9784489020001.jpg"
+  }
+}

@@ -28,6 +28,13 @@
         "json/tags/tags_023_000.json"
       ]
     },
+    "130:心理学": {
+      "page_num": 1,
+      "tag": "130:心理学",
+      "pages": [
+        "json/tags/tags_130_000.json"
+      ]
+    },
     "141:夢・催眠": {
       "page_num": 1,
       "tag": "141:夢・催眠",
@@ -63,6 +70,13 @@
       "tag": "288:個人伝記",
       "pages": [
         "json/tags/tags_288_000.json"
+      ]
+    },
+    "302:社会事情・社会史": {
+      "page_num": 1,
+      "tag": "302:社会事情・社会史",
+      "pages": [
+        "json/tags/tags_302_000.json"
       ]
     },
     "310:政治": {
@@ -122,11 +136,26 @@
         "json/tags/tags_388_000.json"
       ]
     },
-    "430:化学": {
+    "411:代数学": {
       "page_num": 1,
+      "tag": "411:代数学",
+      "pages": [
+        "json/tags/tags_411_000.json"
+      ]
+    },
+    "417:応用数学": {
+      "page_num": 1,
+      "tag": "417:応用数学",
+      "pages": [
+        "json/tags/tags_417_000.json"
+      ]
+    },
+    "430:化学": {
+      "page_num": 2,
       "tag": "430:化学",
       "pages": [
-        "json/tags/tags_430_000.json"
+        "json/tags/tags_430_000.json",
+        "json/tags/tags_430_001.json"
       ]
     },
     "451:地質学": {
@@ -134,6 +163,13 @@
       "tag": "451:地質学",
       "pages": [
         "json/tags/tags_451_000.json"
+      ]
+    },
+    "457:気象学": {
+      "page_num": 1,
+      "tag": "457:気象学",
+      "pages": [
+        "json/tags/tags_457_000.json"
       ]
     },
     "468:生物地理": {
@@ -144,10 +180,25 @@
       ]
     },
     "486:両生類・爬虫類": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "486:両生類・爬虫類",
       "pages": [
-        "json/tags/tags_486_000.json"
+        "json/tags/tags_486_000.json",
+        "json/tags/tags_486_001.json"
+      ]
+    },
+    "491:基礎医学": {
+      "page_num": 1,
+      "tag": "491:基礎医学",
+      "pages": [
+        "json/tags/tags_491_000.json"
+      ]
+    },
+    "579:その他": {
+      "page_num": 1,
+      "tag": "579:その他",
+      "pages": [
+        "json/tags/tags_579_000.json"
       ]
     },
     "673:流通": {
@@ -162,6 +213,13 @@
       "tag": "675:広告",
       "pages": [
         "json/tags/tags_675_000.json"
+      ]
+    },
+    "754:建築デザイン": {
+      "page_num": 1,
+      "tag": "754:建築デザイン",
+      "pages": [
+        "json/tags/tags_754_000.json"
       ]
     },
     "780:スポーツ・体育": {

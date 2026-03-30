@@ -7,6 +7,7 @@ const params = Object.fromEntries(new URLSearchParams(window.location.search));
 Vue.createApp({
   data() {
     return {
+      logs: [],
       params: params,
       // 検索パネル用
       // lastScrollY: 0,
@@ -775,6 +776,11 @@ Vue.createApp({
     open_notion(page_id){
       window.open("https://www.notion.so/"+page_id.replace(/\_/g, "").replace(/-/g, ""), '_blank')
     },
+    
+    add_logs(log){
+      this.logs.add(log);
+      logslogs = this.logs.slice(0, 10)
+    }
   }
 }).mount("#app");
 
