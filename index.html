@@ -11,7 +11,15 @@
 </head>
 <body>
   <div id="app">
-  
+    
+    <div 
+      id="message_panel"
+      style="display:none;"
+      :style="{'display':'block'}"
+      v-if="params.mode=='admin'"
+    >
+      <div v-for="log in logs" >{{log}}</div>
+    </div>
     <div id="title" @click="query_pane_toggle()">
       <div class="query_itm">
         My Booklet
@@ -111,119 +119,51 @@
     </div>
     <main id="booklet" :class="booklet_class">
       <div
-        v-for="isbn in visibleIsbns"
-        :key="isbn"
+        v-for="book in books"
+        :key="book.isbn"
         class="book-card"
-        :data-isbn="isbn"
+        :data-isbn="book.record.isbn"
         :ref="el => register_observe(el)"
       >
-      <!-- {{(booksByIsbn[isbn]??{}).loaded}}{{!(booksByIsbn[isbn]??{}).loaded}} -->
         <img 
-          :src="booksByIsbn[isbn].record.cover_url" 
+          :src="book.record.cover_url" 
           style="display:none;"
-          v-if="(booksByIsbn[isbn]??{}).stat == 'loaded'"
-          @load="load_book_cover(isbn)"
+          v-if="book.stat == 'loaded'"
+          @load="set_book_stat(book.record.isbn)"
         >
         <img 
-           v-if="(booksByIsbn[isbn]??{}).stat == 'imgLoaded'"
+           v-if="book.stat == 'imgLoaded'"
           class="cover" 
-          :src="booksByIsbn[isbn].record.cover_url" 
-          @click.stop="show_detail(isbn)"
+          :src="book.record.cover_url" 
+          @click.stop="show_detail(book.record.isbn)"
           style="display:none;" 
           :style="{'display':'block'}"
         />
-        <div class="loading" v-if="(booksByIsbn[isbn]??{}).stat != 'imgLoaded'" ></div>
+        <div class="loading" v-if="book.stat != 'imgLoaded'" ></div>
       </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
-      <div v-if="false" class="book-card">
-        <div class="loading"></div>
-      </div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
+      <div v-if="false" class="book-card"><div class="loading"></div></div>
     </main>
     <div 
       id="detail_panel_layer" 

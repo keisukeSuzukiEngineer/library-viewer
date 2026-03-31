@@ -146,6 +146,9 @@ Vue.createApp({
       
       return isbns;
     },
+    books(){
+      return this.visibleIsbns.map(isbn=>this.booksByIsbn[isbn]??{record:{isbn:isbn}})
+    },
     
     // 検索パネル表示関係
     query_layer_class(){
@@ -283,12 +286,12 @@ Vue.createApp({
     set_events(){
       window.addEventListener(
       "scroll",
-      (e) => {
+      () => {
           let isInputFocused = false
-          if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+          if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
             isInputFocused = true;
           }
-          
+          this.add_logs(`isInputFocused:${isInputFocused}`)
           if(!isInputFocused)this.query_pane_close()
         }, 
         { passive: true }
@@ -325,7 +328,7 @@ Vue.createApp({
           .filter(itm => itm[0] == def_key || !def_only)
           .map(itm => ({"val" : itm[1].sort_key, "label": itm[1].sort_label})),
         "order_select": [{"label": "昇順", "val": "asc"}, {"label": "降順", "val": "desc"}],
-        "indexs": await this.loadAllPagesParallel(
+        "indexs": await loadAllPagesParallel(
             Object
             .entries(sortedIndex.indexs)
             .filter(itm => itm[0] == def_key || !def_only)
@@ -346,7 +349,7 @@ Vue.createApp({
       }
       
       this.tokenIndex = await fetch(this.index.token_index).then(r => r.json());
-      const indexScores = await this.loadAllPagesParallel(this.tokenIndex.indexs)
+      const indexScores = await loadAllPagesParallel(this.tokenIndex.indexs)
       // console.log(indexScores)
       // console.log(indexScores['tokens'][0])
       this.tokenOrders = {
@@ -373,7 +376,7 @@ Vue.createApp({
         "selected": [],
         // "selected": ["100"],
           "indexs": Object.fromEntries(
-                      Object.entries(await this.loadAllPagesParallel(tagsIndex.indexs))
+                      Object.entries(await loadAllPagesParallel(tagsIndex.indexs))
                         .map(([tag, isbns]) => [
                         tag,
                         new Set(isbns)
@@ -483,7 +486,7 @@ Vue.createApp({
       };
       // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
     },
-    load_book_cover(isbn){
+    set_book_stat(isbn){
       this.booksByIsbn[isbn] = {
         ...this.booksByIsbn[isbn],
         stat: 'imgLoaded'
@@ -778,8 +781,8 @@ Vue.createApp({
     },
     
     add_logs(log){
-      this.logs.add(log);
-      logslogs = this.logs.slice(0, 10)
+      this.logs.push(log);
+      this.logs = this.logs.slice(0, 10)
     }
   }
 }).mount("#app");
@@ -797,3 +800,24 @@ function set_and_merge(sets){
   
   return merged_set
 }
+async function loadAllPagesParallel(indexs, isbnIsSet = false) {
+    const result = {};
+    // console.log(indexs)
+    await Promise.all(
+      Object.entries(indexs).map(async ([key, info]) => {
+        const pagesData = await Promise.all(
+          info.pages.map(p => fetch(p).then(r => r.json()))
+        );
+
+        // 🔽 ここで加工
+        const isbns = pagesData.flatMap(p => p.isbns);
+
+        result[key] = isbnIsSet
+          ? new Set(isbns)
+          : isbns;
+      })
+    );
+
+
+    return result;
+  }

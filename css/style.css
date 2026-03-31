@@ -9,6 +9,17 @@ body {
     background: #fafafa;
 }
 
+#message_panel{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20rem;
+    height: 10rem;
+    background: lightgray;
+    z-index: 99;
+    opacity: 0.3;
+}
+
 .query_itm{
     height: 2rem;
     display: flex;

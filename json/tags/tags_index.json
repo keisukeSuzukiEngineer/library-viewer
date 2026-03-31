@@ -65,11 +65,46 @@
         "json/tags/tags_164_001.json"
       ]
     },
+    "169:新興宗教・現代宗教": {
+      "page_num": 1,
+      "tag": "169:新興宗教・現代宗教",
+      "pages": [
+        "json/tags/tags_169_000.json"
+      ]
+    },
+    "175:布教・伝道": {
+      "page_num": 1,
+      "tag": "175:布教・伝道",
+      "pages": [
+        "json/tags/tags_175_000.json"
+      ]
+    },
+    "193:東洋宗教": {
+      "page_num": 1,
+      "tag": "193:東洋宗教",
+      "pages": [
+        "json/tags/tags_193_000.json"
+      ]
+    },
+    "209:世界史（総記）": {
+      "page_num": 1,
+      "tag": "209:世界史（総記）",
+      "pages": [
+        "json/tags/tags_209_000.json"
+      ]
+    },
     "288:個人伝記": {
       "page_num": 1,
       "tag": "288:個人伝記",
       "pages": [
         "json/tags/tags_288_000.json"
+      ]
+    },
+    "291:日本地誌": {
+      "page_num": 1,
+      "tag": "291:日本地誌",
+      "pages": [
+        "json/tags/tags_291_000.json"
       ]
     },
     "302:社会事情・社会史": {
@@ -101,10 +136,11 @@
       ]
     },
     "335:経営・管理": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "335:経営・管理",
       "pages": [
-        "json/tags/tags_335_000.json"
+        "json/tags/tags_335_000.json",
+        "json/tags/tags_335_001.json"
       ]
     },
     "336:経営学": {
@@ -120,6 +156,13 @@
       "tag": "361:社会心理",
       "pages": [
         "json/tags/tags_361_000.json"
+      ]
+    },
+    "366:労働・職業": {
+      "page_num": 1,
+      "tag": "366:労働・職業",
+      "pages": [
+        "json/tags/tags_366_000.json"
       ]
     },
     "382:世界民俗学": {
@@ -143,6 +186,13 @@
         "json/tags/tags_411_000.json"
       ]
     },
+    "415:計算数学": {
+      "page_num": 1,
+      "tag": "415:計算数学",
+      "pages": [
+        "json/tags/tags_415_000.json"
+      ]
+    },
     "417:応用数学": {
       "page_num": 1,
       "tag": "417:応用数学",
@@ -159,10 +209,11 @@
       ]
     },
     "451:地質学": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "451:地質学",
       "pages": [
-        "json/tags/tags_451_000.json"
+        "json/tags/tags_451_000.json",
+        "json/tags/tags_451_001.json"
       ]
     },
     "457:気象学": {
@@ -177,6 +228,21 @@
       "tag": "468:生物地理",
       "pages": [
         "json/tags/tags_468_000.json"
+      ]
+    },
+    "469:人類学（自然人類学）": {
+      "page_num": 2,
+      "tag": "469:人類学（自然人類学）",
+      "pages": [
+        "json/tags/tags_469_000.json",
+        "json/tags/tags_469_001.json"
+      ]
+    },
+    "481:動物構造": {
+      "page_num": 1,
+      "tag": "481:動物構造",
+      "pages": [
+        "json/tags/tags_481_000.json"
       ]
     },
     "486:両生類・爬虫類": {
@@ -194,6 +260,13 @@
         "json/tags/tags_491_000.json"
       ]
     },
+    "498:衛生学・予防医学": {
+      "page_num": 1,
+      "tag": "498:衛生学・予防医学",
+      "pages": [
+        "json/tags/tags_498_000.json"
+      ]
+    },
     "579:その他": {
       "page_num": 1,
       "tag": "579:その他",
@@ -209,10 +282,11 @@
       ]
     },
     "675:広告": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "675:広告",
       "pages": [
-        "json/tags/tags_675_000.json"
+        "json/tags/tags_675_000.json",
+        "json/tags/tags_675_001.json"
       ]
     },
     "754:建築デザイン": {
@@ -220,6 +294,13 @@
       "tag": "754:建築デザイン",
       "pages": [
         "json/tags/tags_754_000.json"
+      ]
+    },
+    "763:器楽": {
+      "page_num": 1,
+      "tag": "763:器楽",
+      "pages": [
+        "json/tags/tags_763_000.json"
       ]
     },
     "780:スポーツ・体育": {
