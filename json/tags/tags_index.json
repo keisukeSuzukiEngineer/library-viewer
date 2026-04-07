@@ -65,6 +65,13 @@
         "json/tags/tags_164_001.json"
       ]
     },
+    "168:キリスト教": {
+      "page_num": 1,
+      "tag": "168:キリスト教",
+      "pages": [
+        "json/tags/tags_168_000.json"
+      ]
+    },
     "169:新興宗教・現代宗教": {
       "page_num": 1,
       "tag": "169:新興宗教・現代宗教",
@@ -80,10 +87,11 @@
       ]
     },
     "193:東洋宗教": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "193:東洋宗教",
       "pages": [
-        "json/tags/tags_193_000.json"
+        "json/tags/tags_193_000.json",
+        "json/tags/tags_193_001.json"
       ]
     },
     "209:世界史（総記）": {
@@ -93,11 +101,25 @@
         "json/tags/tags_209_000.json"
       ]
     },
+    "210:日本史": {
+      "page_num": 1,
+      "tag": "210:日本史",
+      "pages": [
+        "json/tags/tags_210_000.json"
+      ]
+    },
     "288:個人伝記": {
       "page_num": 1,
       "tag": "288:個人伝記",
       "pages": [
         "json/tags/tags_288_000.json"
+      ]
+    },
+    "289:人物別伝記": {
+      "page_num": 1,
+      "tag": "289:人物別伝記",
+      "pages": [
+        "json/tags/tags_289_000.json"
       ]
     },
     "291:日本地誌": {
@@ -151,6 +173,14 @@
         "json/tags/tags_336_001.json"
       ]
     },
+    "338:商業": {
+      "page_num": 2,
+      "tag": "338:商業",
+      "pages": [
+        "json/tags/tags_338_000.json",
+        "json/tags/tags_338_001.json"
+      ]
+    },
     "361:社会心理": {
       "page_num": 1,
       "tag": "361:社会心理",
@@ -165,6 +195,13 @@
         "json/tags/tags_366_000.json"
       ]
     },
+    "379:社会教育（生涯教育）": {
+      "page_num": 1,
+      "tag": "379:社会教育（生涯教育）",
+      "pages": [
+        "json/tags/tags_379_000.json"
+      ]
+    },
     "382:世界民俗学": {
       "page_num": 1,
       "tag": "382:世界民俗学",
@@ -172,11 +209,19 @@
         "json/tags/tags_382_000.json"
       ]
     },
-    "388:民話・伝説": {
+    "387:宗教的習俗": {
       "page_num": 1,
+      "tag": "387:宗教的習俗",
+      "pages": [
+        "json/tags/tags_387_000.json"
+      ]
+    },
+    "388:民話・伝説": {
+      "page_num": 2,
       "tag": "388:民話・伝説",
       "pages": [
-        "json/tags/tags_388_000.json"
+        "json/tags/tags_388_000.json",
+        "json/tags/tags_388_001.json"
       ]
     },
     "411:代数学": {
@@ -208,6 +253,13 @@
         "json/tags/tags_430_001.json"
       ]
     },
+    "431:物理化学": {
+      "page_num": 1,
+      "tag": "431:物理化学",
+      "pages": [
+        "json/tags/tags_431_000.json"
+      ]
+    },
     "451:地質学": {
       "page_num": 2,
       "tag": "451:地質学",
@@ -223,6 +275,13 @@
         "json/tags/tags_457_000.json"
       ]
     },
+    "467:動物": {
+      "page_num": 1,
+      "tag": "467:動物",
+      "pages": [
+        "json/tags/tags_467_000.json"
+      ]
+    },
     "468:生物地理": {
       "page_num": 1,
       "tag": "468:生物地理",
@@ -236,6 +295,13 @@
       "pages": [
         "json/tags/tags_469_000.json",
         "json/tags/tags_469_001.json"
+      ]
+    },
+    "473:植物生態": {
+      "page_num": 1,
+      "tag": "473:植物生態",
+      "pages": [
+        "json/tags/tags_473_000.json"
       ]
     },
     "481:動物構造": {
@@ -296,6 +362,13 @@
         "json/tags/tags_754_000.json"
       ]
     },
+    "756:書体・タイポグラフィ": {
+      "page_num": 1,
+      "tag": "756:書体・タイポグラフィ",
+      "pages": [
+        "json/tags/tags_756_000.json"
+      ]
+    },
     "763:器楽": {
       "page_num": 1,
       "tag": "763:器楽",
@@ -308,6 +381,20 @@
       "tag": "780:スポーツ・体育",
       "pages": [
         "json/tags/tags_780_000.json"
+      ]
+    },
+    "789:その他": {
+      "page_num": 1,
+      "tag": "789:その他",
+      "pages": [
+        "json/tags/tags_789_000.json"
+      ]
+    },
+    "798:手品": {
+      "page_num": 1,
+      "tag": "798:手品",
+      "pages": [
+        "json/tags/tags_798_000.json"
       ]
     },
     "812:文字": {

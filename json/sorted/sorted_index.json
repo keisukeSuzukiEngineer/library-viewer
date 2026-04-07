@@ -1,7 +1,7 @@
 {
   "indexs": {
     "updated_at": {
-      "page_num": 6,
+      "page_num": 7,
       "sort_key": "updated_at",
       "sort_label": "更新順",
       "pages": [
@@ -10,11 +10,12 @@
         "json/sorted/sorted_updated_at_002.json",
         "json/sorted/sorted_updated_at_003.json",
         "json/sorted/sorted_updated_at_004.json",
-        "json/sorted/sorted_updated_at_005.json"
+        "json/sorted/sorted_updated_at_005.json",
+        "json/sorted/sorted_updated_at_006.json"
       ]
     },
     "title": {
-      "page_num": 6,
+      "page_num": 7,
       "sort_key": "title",
       "sort_label": "タイトル順",
       "pages": [
@@ -23,11 +24,12 @@
         "json/sorted/sorted_title_002.json",
         "json/sorted/sorted_title_003.json",
         "json/sorted/sorted_title_004.json",
-        "json/sorted/sorted_title_005.json"
+        "json/sorted/sorted_title_005.json",
+        "json/sorted/sorted_title_006.json"
       ]
     },
     "created_at": {
-      "page_num": 6,
+      "page_num": 7,
       "sort_key": "created_at",
       "sort_label": "登録順",
       "pages": [
@@ -36,7 +38,8 @@
         "json/sorted/sorted_created_at_002.json",
         "json/sorted/sorted_created_at_003.json",
         "json/sorted/sorted_created_at_004.json",
-        "json/sorted/sorted_created_at_005.json"
+        "json/sorted/sorted_created_at_005.json",
+        "json/sorted/sorted_created_at_006.json"
       ]
     }
   },

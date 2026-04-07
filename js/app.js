@@ -4,6 +4,22 @@ const params = Object.fromEntries(new URLSearchParams(window.location.search));
 
 // console.log(params)
 
+const CompA = {
+  template: `
+    <div>
+      <input v-model="text" @input="emitValue" placeholder="検索">
+    </div>
+  `,
+  data() {
+    return { text: "" }
+  },
+  methods: {
+    emitValue() {
+      this.$emit("update", this.text)
+    }
+  }
+}
+
 Vue.createApp({
   data() {
     return {

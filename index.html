@@ -7,11 +7,12 @@
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <title>蔵書閲覧</title>
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preload" as="image" href="./img/app_icon.svg">
+  <link rel="stylesheet" href="css/style-loading.css" />
 </head>
 <body>
+  <div id="loadin_layer"></div>
   <div id="app">
-    
     <div 
       id="message_panel"
       style="display:none;"
@@ -205,6 +206,7 @@
         <table id="long_data">
           <tbody>
             <tr><th>目次</th><td>{{book_detail.content}}</td></tr>
+            <tr><th>メモ</th><td>{{book_detail.memo}}</td></tr>
           </tbody>
         </table>
       </div>
@@ -212,9 +214,11 @@
   </div>
   
    
-  <div ref="script_area">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
-    <script src="js/app.js"defer></script>
-  </div>
   </body>
+  <link rel="preload" as="image" href="./img/booklet-center.jpeg">
+  <link rel="preload" as="image" href="./img/booklet-left.jpeg">
+  <link rel="preload" as="image" href="./img/booklet-right.jpeg">
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+  <script src="js/app.js"defer></script>
 </html>

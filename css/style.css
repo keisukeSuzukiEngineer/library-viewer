@@ -9,6 +9,31 @@ body {
     background: #fafafa;
 }
 
+@keyframes loadingIconFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loadingLayerFadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  50% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 #message_panel{
     position: fixed;
     top: 0;
@@ -18,6 +43,7 @@ body {
     background: lightgray;
     z-index: 99;
     opacity: 0.3;
+    pointer-events: none;
 }
 
 .query_itm{
