@@ -313,10 +313,14 @@ body {
     padding: 0px 10px;
     /* border: 2px solid #333; */
     justify-content: space-around;
-    background-image: url(./../img/booklet-left.jpeg), url(./../img/booklet-right.jpeg), url(./../img/booklet-center.jpeg);
-    background-repeat: repeat-y, repeat-y, repeat;
-    background-position: left top, right top, 25px top;
-    background-size: 20px 165px, 20px 165px, calc(100% - 40px) 165px;
+    background:
+      url(./../img/booklet-left.jpeg) left top / 20px 165px repeat-y,
+      url(./../img/booklet-right.jpeg) right top / 20px 165px repeat-y,
+      url(./../img/booklet-center.jpeg) top / 100% 165px repeat-y;
+    /* background-image: url(./../img/booklet-left.jpeg), url(./../img/booklet-right.jpeg), url(./../img/booklet-center.jpeg); */
+    /* background-repeat: repeat-y, repeat-y, repeat; */
+    /* background-position: left top, right top, 25px top; */
+    /* background-size: 20px 165px, 20px 165px, calc(100% - 40px) 165px; */
     overflow: hidden;
     
     &.slide_bottom{
@@ -363,7 +367,7 @@ body {
     width:100vw;
     height: 100vh;
     background-color: rgb(50 50 50 / 0.5);
-    transition: all 0.5s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
     opacity: 0;
     
     &.open{
@@ -372,7 +376,7 @@ body {
        visibility: visible;
        
        #detail_panel{
-          margin: 10vh auto;
+          margin-top: 10vh;
        }
     }
     
@@ -382,20 +386,51 @@ body {
         max-width: 1500px;
         height: 80%;
         padding: 20px;
-        padding-top: 5px;
-        background-image: url(./../img/detail_head.jpeg), url(./../img/detail_back.jpeg);
-        background-size: 100% 1.7rem, 100% calc(100% - 1.6rem);
-        background-repeat: no-repeat;
-        background-position-y: 0, 1.6rem;
+        padding-top: 0;
+        border-radius: 15px;
+        
+         --gradient-color: burlywood 46%, maroon 51%, burlywood 56%, maroon 60%, burlywood 62%;
+         --header-size: 13px;
+         --padding-size: 20px;
+         --top-padding-size: 13px;
+        background:
+          /* 四隅 */
+          radial-gradient(circle farthest-side at 100% 100%, var(--gradient-color)) 
+          left var(--header-size) / var(--padding-size) var(--padding-size) no-repeat,
+          
+          radial-gradient(circle farthest-side at 0% 100%, var(--gradient-color)) 
+          right var(--header-size) / var(--padding-size) var(--padding-size) no-repeat,
+          
+          radial-gradient(circle farthest-side at 0% 0%, var(--gradient-color)) 
+          right bottom / var(--padding-size) var(--padding-size) no-repeat,
+          
+          radial-gradient(circle farthest-side at 100% 0%, var(--gradient-color)) 
+          left bottom / var(--padding-size) var(--padding-size) no-repeat,
+          
+          /* 四辺 */
+          linear-gradient(0deg, var(--gradient-color)) center var(--header-size) / 
+          100% var(--padding-size) no-repeat,
+          
+          linear-gradient(90deg, var(--gradient-color)) right var(--top-padding-size) / 
+          var(--padding-size) calc(100% - var(--top-padding-size)) no-repeat,
+          
+          linear-gradient(180deg, var(--gradient-color)) bottom / 
+          100% var(--padding-size) no-repeat,
+          
+          linear-gradient(270deg, var(--gradient-color)) left var(--top-padding-size) / 
+          var(--padding-size) calc(100% - var(--top-padding-size)) no-repeat,
+
+          /* 中央 */
+          burlywood center / 100% 100% no-repeat;
         display: grid;
         grid-template-areas:
             "ctrl_panel ctrl_panel"
-            "cover main_data"
-            "long_data long_data";
+            "cover      main_data"
+            "long_data  long_data";
         grid-template-columns: minmax(160px, 30%) auto;
-        grid-template-rows: 1.5rem calc(50% - 1.5rem) auto;
+        grid-template-rows:  var(--padding-size) calc(50% - var(--padding-size)) auto;
         gap: 10px;
-        transition: all 0.5s ease;
+        transition: margin-top 0.5s ease;
       
         img.book_cover{
             width: 100%;
@@ -415,6 +450,8 @@ body {
                 border-radius: 0.3rem;
                 padding: 0 1rem;
                 margin-left: 0.5rem;
+                height: 16px;
+                line-height: 17px;
                 cursor: pointer;
             }
             

@@ -2,6 +2,198 @@ const { createApp } = Vue;
 
 const params = Object.fromEntries(new URLSearchParams(window.location.search));
 
+
+function set_and_merge(sets){
+  // console.log(sets)
+  const [first_set, ...rest_sets] = sets.sort((a, b) => a.size - b.size);
+  
+  // console.log(first_isbns)
+  const merged_set = rest_sets
+    .reduce(
+      (base_set, rest_set)=>new Set([...base_set].filter(itm => rest_set.has(itm))),
+      first_set || new Set()
+    )
+  
+  return merged_set
+}
+async function loadAllPagesParallel(indexs, isbnIsSet = false) {
+    const result = {};
+    // console.log(indexs)
+    await Promise.all(
+      Object.entries(indexs).map(async ([key, info]) => {
+        const pagesData = await Promise.all(
+          info.pages.map(p => fetch(p).then(r => r.json()))
+        );
+
+        // 🔽 ここで加工
+        const isbns = pagesData.flatMap(p => p.isbns);
+
+        result[key] = isbnIsSet
+          ? new Set(isbns)
+          : isbns;
+      })
+    );
+
+
+    return result;
+}
+  
+function debounce(fn, delay) {
+    let timer
+    return function (...args) {
+      clearTimeout(timer)
+      timer = setTimeout(() => fn.apply(this, args), delay)
+    }
+}
+
+class FetchManager {
+  constructor({ concurrency = 5, retry = 1 , categories = []} = {}) {
+    this.concurrency = concurrency
+    this.retry = retry
+
+    this.categories = [...categories, null];
+    this.categorySet = new Set(categories)
+    this.queue = Object.fromEntries(
+      this.categories
+      .map(k => [k, []])
+    )
+    this.running = new Map()
+
+    this.cache = new Map()
+    this.inFlight = new Map()
+    this.controllers = new Map()
+  }
+
+  request({ url, priority = 0 , category = null}) {
+    return new Promise((resolve, reject) => {
+      
+      // キャッシュ
+      if (this.cache.has(url)) {
+        resolve(this.cache.get(url))
+        return
+      }
+
+      // 重複
+      if (this.inFlight.has(url)) {
+        this.inFlight.get(url).push({ resolve, reject })
+        return
+      }
+
+      this.inFlight.set(url, [{ resolve, reject }])
+      
+      const tuned_category = this.categorySet.has(category) ? category : null;
+
+      this.queue[tuned_category].push({
+          url, 
+          priority, 
+          category: tuned_category, 
+          retry: this.retry 
+      });
+      this.queue[tuned_category]._dirty = true;
+      
+      if(tuned_category == "books"){
+          // booksの場合はpriorityにelを入れておき、毎度fetchの直前に描画位置をもとにソートする
+      }
+      else{
+      }
+
+      this._run()
+    })
+  }
+
+  async _run() {
+    if (this.running.size >= this.concurrency) return
+
+    const tasks = (() => {
+      for (const category of this.categories) {
+        if (this.queue[category].length > 0) {
+          return this.queue[category]
+        }
+      }
+      return null
+    })();
+    if (!tasks) return
+    
+    
+    if(tasks[0]?.category == "books"){
+        // booksの場合はpriorityにelを入れておき、毎度fetchの直前に描画位置をもとにソートする
+        tasks.forEach(item => {
+          const rect = item.priority.getBoundingClientRect()
+
+          let y = rect.top
+          if (y < 0) y += 100000
+
+          item._y = y
+          item._x = rect.left
+        })
+        tasks.sort((a, b) => {
+          if (a._y !== b._y) return a._y - b._y
+          return a._x - b._x
+        })
+    }
+    else if(tasks._dirty){
+        tasks.sort((a, b) => b.priority - a.priority);
+        tasks._dirty = false;
+    }
+  
+    const task = tasks.shift()
+    
+    const { url } = task;
+
+    this.running.set(url, true)
+
+    const controller = new AbortController()
+    this.controllers.set(url, controller)
+
+    try {
+      const res = await fetch(url, { signal: controller.signal })
+      const text = await res.text() // ←軽量化
+      const data = JSON.parse(text)
+
+      this.cache.set(url, data)
+
+      const callbacks = this.inFlight.get(url) || []
+      callbacks.forEach(cb => cb.resolve(data))
+
+    } catch (e) {
+      if (task.retry > 0) {
+        task.retry--
+        tasks.push(task)
+        tasks._dirty = false;
+      } else {
+        const callbacks = this.inFlight.get(url) || []
+        callbacks.forEach(cb => cb.reject(e))
+      }
+    } finally {
+      this.inFlight.delete(url)
+      this.running.delete(url)
+      this.controllers.delete(url)
+
+      // イベントループ戻す（重要）
+      await Promise.resolve()
+
+      this._run()
+    }
+  }
+
+  abort(url) {
+    const controller = this.controllers.get(url)
+    if (controller) {
+      controller.abort()
+      this.controllers.delete(url)
+    }
+  }
+
+  clearCache() {
+    this.cache.clear()
+  }
+}
+const fetchManager = new FetchManager({
+    concurrency: 1,
+    retry: 1 ,
+    categories: ["index", "books"]
+    
+});
 // console.log(params)
 
 const CompA = {
@@ -292,12 +484,28 @@ Vue.createApp({
   async mounted() {
     this.standby_observer();
     this.set_events();
-    await this.loadIndex();
-    await this.loadSorts(def_only=true);
-    this.change_search_text(); // 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
+    // await this.loadIndex();
+    // await this.loadSorts(def_only=true);
+    // this.change_search_text(); // 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
+    
+    
+    requestAnimationFrame(() => {
+        this.initAsync(); 
+    });
+  },
+  
+  watch:{
+      searchText: debounce(function () {
+        this.recalcVisible()
+      }, 200),
   },
 
   methods: {
+    async initAsync() {
+      await this.loadIndex()
+      await this.loadSorts(true)
+      this.change_search_text()// 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
+    },
     // 要素へのイベント設定用
     set_events(){
       window.addEventListener(
@@ -318,6 +526,15 @@ Vue.createApp({
     async loadIndex(){
       // console.log("call loadIndex")
       this.index = await fetch("json/index.json").then(r => r.json());
+      
+      fetchManager.request({
+        url:"json/index.json",
+        priority: 10
+      })
+      .then(data => {
+          this.index = data;
+          this.loadSorts(true);
+      })
     },
     async loadSorts(def_only = false){
       // console.log("call loadFirstSort")
@@ -328,6 +545,7 @@ Vue.createApp({
         // console.log("skip loadSorts")
         return;
       }
+
       const sortedIndex = await fetch(this.index.sorted_inex).then(r => r.json());
       // console.log(this.sortedIndex)
       
@@ -483,7 +701,7 @@ Vue.createApp({
 
       return result;
     },
-    async loadBook(isbn) {
+    async loadBook(isbn, entry) {
       if (this.booksByIsbn[isbn]) return;
 
       // プレースホルダ（即反映）
@@ -491,15 +709,17 @@ Vue.createApp({
         ? this.$set(this.booksByIsbn, isbn, null)
         : (this.booksByIsbn[isbn] = null);
 
-      const book = await fetch(`json/books/book_${isbn}.json`)
-        .then(r => r.json());
-
-      // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
-      // 取れた瞬間に画面更新
-      this.booksByIsbn[isbn] = {
-        ...book,
-        stat: 'loaded'
-      };
+      fetchManager.request({
+        url:`json/books/book_${isbn}.json`,
+        priority: entry.target,
+        category: "books"
+      })
+      .then(book => {
+        this.booksByIsbn[isbn] = {
+          ...book,
+          stat: "loaded"
+        };
+      })
       // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
     },
     set_book_stat(isbn){
@@ -520,7 +740,7 @@ Vue.createApp({
           for (const entry of entries) {
             if (entry.isIntersecting) {
               const isbn = entry.target.dataset.isbn;
-              this.loadBook(isbn);
+              this.loadBook(isbn, entry);
               this.observer.unobserve(entry.target);
             }
           }
@@ -802,38 +1022,3 @@ Vue.createApp({
     }
   }
 }).mount("#app");
-
-function set_and_merge(sets){
-  // console.log(sets)
-  const [first_set, ...rest_sets] = sets.sort((a, b) => a.size - b.size);
-  
-  // console.log(first_isbns)
-  const merged_set = rest_sets
-    .reduce(
-      (base_set, rest_set)=>new Set([...base_set].filter(itm => rest_set.has(itm))),
-      first_set || new Set()
-    )
-  
-  return merged_set
-}
-async function loadAllPagesParallel(indexs, isbnIsSet = false) {
-    const result = {};
-    // console.log(indexs)
-    await Promise.all(
-      Object.entries(indexs).map(async ([key, info]) => {
-        const pagesData = await Promise.all(
-          info.pages.map(p => fetch(p).then(r => r.json()))
-        );
-
-        // 🔽 ここで加工
-        const isbns = pagesData.flatMap(p => p.isbns);
-
-        result[key] = isbnIsSet
-          ? new Set(isbns)
-          : isbns;
-      })
-    );
-
-
-    return result;
-  }
