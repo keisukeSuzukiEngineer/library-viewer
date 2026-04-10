@@ -18,7 +18,7 @@ function set_and_merge(sets){
 }
 async function loadAllPagesParallel(indexs, isbnIsSet = false) {
     const result = {};
-    // console.log(indexs)
+    console.log(indexs)
     await Promise.all(
       Object.entries(indexs).map(async ([key, info]) => {
         const pagesData = await Promise.all(
@@ -189,9 +189,9 @@ class FetchManager {
   }
 }
 const fetchManager = new FetchManager({
-    concurrency: 1,
+    concurrency: 10,
     retry: 1 ,
-    categories: ["index", "books"]
+    categories: ["books", "index"]
     
 });
 // console.log(params)
@@ -495,15 +495,15 @@ Vue.createApp({
   },
   
   watch:{
-      searchText: debounce(function () {
-        this.recalcVisible()
-      }, 200),
+      // searchText: debounce(function () {
+        // this.recalcVisible()
+      // }, 200),
   },
 
   methods: {
     async initAsync() {
       await this.loadIndex()
-      await this.loadSorts(true)
+      // await this.loadSorts(true)
       this.change_search_text()// 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
     },
     // 要素へのイベント設定用
@@ -536,7 +536,7 @@ Vue.createApp({
           this.loadSorts(true);
       })
     },
-    async loadSorts(def_only = false){
+    async loadSorts(def_only = false, callback=null){
       // console.log("call loadFirstSort")
       if(
         this.sortOrders &&
@@ -545,80 +545,131 @@ Vue.createApp({
         // console.log("skip loadSorts")
         return;
       }
-
-      const sortedIndex = await fetch(this.index.sorted_inex).then(r => r.json());
-      // console.log(this.sortedIndex)
       
-      const def_key = sortedIndex.default_key;
-      // console.log(def_key, this.sortedIndex.indexs[def_key])
-      // console.log({
-            // def_key: this.sortedIndex.indexs[def_key]
-        // })
-      this.sortOrders = {
-        "key": def_key,
-        "order": sortedIndex.default_order,
-        "key_select": Object
-          .entries(sortedIndex.indexs)
-          .filter(itm => itm[0] == def_key || !def_only)
-          .map(itm => ({"val" : itm[1].sort_key, "label": itm[1].sort_label})),
-        "order_select": [{"label": "昇順", "val": "asc"}, {"label": "降順", "val": "desc"}],
-        "indexs": await loadAllPagesParallel(
-            Object
-            .entries(sortedIndex.indexs)
-            .filter(itm => itm[0] == def_key || !def_only)
-            .reduce((acc, cur) => {
-              acc[cur[0]] = cur[1];
-              return acc;
-            }, {})
-        ),
-        "def_only": def_only
-      }
+      fetchManager.request({
+        url:this.index.sorted_inex,
+        priority: 0,
+        category: "index"
+      })
+      .then(sorted_inex => Promise.all(
+          Object.entries(sorted_inex.indexs)
+          .filter(itm => itm[0] == sorted_inex.default_key || !def_only)
+          .map(itm => 
+            Promise.all(
+              itm[1].pages.map(url=>
+                fetchManager.request({
+                  url,
+                  category: "index"
+                })
+              )
+            )
+            .then(results=>[itm[0], results.map(result => result.isbns).flat()])
+          )
+        ).then(result => {
+          this.sortOrders = {
+            "key": sorted_inex.default_key,
+            "order": sorted_inex.default_order,
+            "key_select": Object.entries(sorted_inex.indexs)
+              .filter(itm => itm[0] == sorted_inex.default_key || !def_only)
+              .map(itm => ({"val" : itm[1].sort_key, "label": itm[1].sort_label})),
+            "order_select": [{"label": "昇順", "val": "asc"}, {"label": "降順", "val": "desc"}],
+            "indexs": Object.fromEntries(result),
+            "def_only": def_only
+          }
+          if(callback)callback();
+        })
+      )
     },
-    async loadTokens(){
-      // console.log("call loadTokens")
+    async loadTokens(callback = null){
+      
       if(this.tokenOrders){
-        // console.log("skip loadTokens")
         this.loadTextAnarizer();
         return
       }
       
-      this.tokenIndex = await fetch(this.index.token_index).then(r => r.json());
-      const indexScores = await loadAllPagesParallel(this.tokenIndex.indexs)
-      // console.log(indexScores)
-      // console.log(indexScores['tokens'][0])
-      this.tokenOrders = {
-        "indexs": Object.fromEntries(
-          Object.entries(indexScores.tokens).map(([key, valueDict]) => [
-            valueDict.token,
-            new Set(Object.entries(valueDict.isbns).map(itm => itm[0]))
-          ])
-        ),
-        "indexScores": Object.fromEntries(
-          Object.entries(indexScores.tokens)
-          .map(([key, valueDict]) => [valueDict.token, valueDict.isbns])
+      fetchManager.request({
+        url:this.index.token_index,
+        priority: 0,
+        category: "index"
+      })
+      .then(tokenIndex => 
+        Promise.all(
+          tokenIndex.indexs.tokens.pages.map(token_page_url => 
+              fetchManager.request({
+                url: token_page_url,
+                category: "index"
+              })
+          )
         )
-      }
-      
-      this.loadTextAnarizer();
+        .then(result =>{
+          const indexScores = result.map(r => r.isbns).flat();
+          
+          this.tokenOrders = {
+            "indexs": Object.fromEntries(
+              indexScores.map(itm => [
+                itm.token,
+                new Set(Object.entries(itm.isbns).map(itm => itm[0]))
+              ])
+            ),
+            "indexScores": Object.fromEntries(
+              indexScores
+              .map(itm => [itm.token, itm.isbns])
+            )
+          }
+          
+          this.loadTextAnarizer();
+          if(callback)callback();
+        })
+      );
     },
-    async loadTags(){
+    async loadTags(callback = null){
       // console.log("call loadTags")
       if(this.tokenOrders)return
       
-      const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
-      this.tagsOrders = {
-        "selected": [],
-        // "selected": ["100"],
-          "indexs": Object.fromEntries(
-                      Object.entries(await loadAllPagesParallel(tagsIndex.indexs))
-                        .map(([tag, isbns]) => [
-                        tag,
-                        new Set(isbns)
-                      ])
-                    )
-      }
+      fetchManager.request({
+        url:this.index.tags_index,
+        priority: 0,
+        category: "index"
+      })
+      .then(tags_index => 
+        Promise.all(
+            Object.entries(tags_index.indexs).map(itm => 
+              Promise.all(itm[1].pages.map(url => 
+                  fetchManager.request({
+                    url,
+                    category: "index"
+                  })
+              )
+            )
+            .then(results => [itm[0], new Set(results.map(itm => itm.isbns).flat())])
+          )
+        )
+        .then(result =>{
+          console.log(Object.fromEntries(result))
+           this.tagsOrders = {
+              "selected": [],
+              // "selected": ["100"],
+              "indexs": Object.fromEntries(result)
+            }
+          
+            this.loadTagAnalyzer();
+            if(callback)callback();
+        }))
       
-      this.loadTagAnalyzer()
+      // const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
+      // this.tagsOrders = {
+        // "selected": [],
+        // // "selected": ["100"],
+          // "indexs": Object.fromEntries(
+                      // Object.entries(await loadAllPagesParallel(tagsIndex.indexs))
+                        // .map(([tag, isbns]) => [
+                        // tag,
+                        // new Set(isbns)
+                      // ])
+                    // )
+      // }
+      
+      // this.loadTagAnalyzer()
     },
     loadTextAnarizer() {
       // console.log("call loadAnarizer", this.trie)
@@ -656,11 +707,6 @@ Vue.createApp({
           }
         }
       }
-      // console.log(has_char)
-      // console.log(has_char['あ'])
-      // console.log(this.tokenOrders.indexScores)
-      // console.log(this.tokenOrders.indexScores[has_char['あ'][0]])
-      // console.log([...has_char['あ']].map(word_char=>this.tokenOrders.indexScores[word_char]))
       this.trie.has_char = has_char;
     },
     loadTagAnalyzer(){
@@ -679,27 +725,6 @@ Vue.createApp({
         }
       }
       this.trie.has_tag_char = has_char;
-    },
-    async loadAllPagesParallel(indexs, isbnIsSet = false) {
-      const result = {};
-      // console.log(indexs)
-      await Promise.all(
-        Object.entries(indexs).map(async ([key, info]) => {
-          const pagesData = await Promise.all(
-            info.pages.map(p => fetch(p).then(r => r.json()))
-          );
-
-          // 🔽 ここで加工
-          const isbns = pagesData.flatMap(p => p.isbns);
-
-          result[key] = isbnIsSet
-            ? new Set(isbns)
-            : isbns;
-        })
-      );
-
-
-      return result;
     },
     async loadBook(isbn, entry) {
       if (this.booksByIsbn[isbn]) return;
@@ -720,7 +745,6 @@ Vue.createApp({
           stat: "loaded"
         };
       })
-      // console.log("loadBook", isbn, (this.booksByIsbn[isbn]??{}).loaded)
     },
     set_book_stat(isbn){
       this.booksByIsbn[isbn] = {
@@ -973,27 +997,25 @@ Vue.createApp({
       
       this.query_panel.sort_editor.stat = "loading"
       
-      await this.loadSorts()
+      await this.loadSorts(def_only=false, callback = ()=>this.query_panel.sort_editor.stat = "standby")
           
-      this.query_panel.sort_editor.stat = "standby"
+      
     },
     async text_panel_setting(){
       // console.log("call sort_setting")
       if(this.query_panel.text_panel.stat == "standby")return;
       this.query_panel.text_panel.stat = "loading"
           
-      await this.loadTokens()
-          
-      this.query_panel.text_panel.stat = "standby"
+      await this.loadTokens(()=>this.query_panel.text_panel.stat = "standby")
     },
     async tag_panel_setting(){
       // console.log("call tag_setting")
       if(this.query_panel.tab_panel.stat == "standby")return;
       this.query_panel.text_panel.stat = "loading"
           
-      await this.loadTags()
+      await this.loadTags(()=>this.query_panel.tab_panel.stat = "standby")
           
-      this.query_panel.tab_panel.stat = "standby"
+      
     },
     
     //詳細表示パネル操作用
