@@ -147,8 +147,23 @@ class FetchManager {
 
     try {
       const res = await fetch(url, { signal: controller.signal })
-      const text = await res.text() // ←軽量化
-      const data = JSON.parse(text)
+      
+      const data = await(async() => {
+          const contentType = res.headers.get("content-type") || "";
+          const text = await res.text();
+          
+          // JSON
+          if (contentType.includes("application/json")) {
+            return JSON.parse(text);
+          }
+
+          // CSV
+          if (contentType.includes("text/csv") || url.endsWith(".csv")) {
+            return parseCSV(text);
+          }
+          
+          return text;
+      })();
 
       this.cache.set(url, data)
 
@@ -352,6 +367,8 @@ Vue.createApp({
       // console.log("taged isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
+     // TODO ここで表示するisbnをsliceするはず
+      
       return isbns;
     },
     books(){
@@ -465,16 +482,6 @@ Vue.createApp({
             ndc += `:${record['ndc'+book.ndc_version+'_name']}`
           }
         }
-        
-        // booksByIsbnの汚染を防ぐため、bookを直接編集することはしない
-        // console.log({
-          // ...book,
-          // 'ndc': ndc,
-        // })
-        // console.log({
-          // ...book,
-          // 'ndc': ndc,
-        // }['updated_at'])
         return {
           ...book,
           'ndc': ndc,
@@ -495,9 +502,12 @@ Vue.createApp({
   },
   
   watch:{
-      // searchText: debounce(function () {
-        // this.recalcVisible()
-      // }, 200),
+      searchText: debounce(function () {
+        this.change_search_text()
+      }, 500),
+      tagText: debounce(function () {
+        this.change_tag_text()
+      }, 500),
   },
 
   methods: {
@@ -536,7 +546,7 @@ Vue.createApp({
           this.loadSorts(true);
       })
     },
-    async loadSorts(def_only = false, callback=null){
+    async loadSorts(def_only = false){
       // console.log("call loadFirstSort")
       if(
         this.sortOrders &&
@@ -576,11 +586,10 @@ Vue.createApp({
             "indexs": Object.fromEntries(result),
             "def_only": def_only
           }
-          if(callback)callback();
         })
       )
     },
-    async loadTokens(callback = null){
+    async loadTokens(calback = null){
       
       if(this.tokenOrders){
         this.loadTextAnarizer();
@@ -618,7 +627,7 @@ Vue.createApp({
           }
           
           this.loadTextAnarizer();
-          if(callback)callback();
+          if(calback)calback();
         })
       );
     },
@@ -645,7 +654,6 @@ Vue.createApp({
           )
         )
         .then(result =>{
-          console.log(Object.fromEntries(result))
            this.tagsOrders = {
               "selected": [],
               // "selected": ["100"],
@@ -655,21 +663,6 @@ Vue.createApp({
             this.loadTagAnalyzer();
             if(callback)callback();
         }))
-      
-      // const tagsIndex = await fetch(this.index.tags_index).then(r => r.json());
-      // this.tagsOrders = {
-        // "selected": [],
-        // // "selected": ["100"],
-          // "indexs": Object.fromEntries(
-                      // Object.entries(await loadAllPagesParallel(tagsIndex.indexs))
-                        // .map(([tag, isbns]) => [
-                        // tag,
-                        // new Set(isbns)
-                      // ])
-                    // )
-      // }
-      
-      // this.loadTagAnalyzer()
     },
     loadTextAnarizer() {
       // console.log("call loadAnarizer", this.trie)
@@ -997,9 +990,9 @@ Vue.createApp({
       
       this.query_panel.sort_editor.stat = "loading"
       
-      await this.loadSorts(def_only=false, callback = ()=>this.query_panel.sort_editor.stat = "standby")
+      await this.loadSorts()
           
-      
+      this.query_panel.sort_editor.stat = "standby"
     },
     async text_panel_setting(){
       // console.log("call sort_setting")
@@ -1013,9 +1006,9 @@ Vue.createApp({
       if(this.query_panel.tab_panel.stat == "standby")return;
       this.query_panel.text_panel.stat = "loading"
           
-      await this.loadTags(()=>this.query_panel.tab_panel.stat = "standby")
+      await this.loadTags()
           
-      
+      this.query_panel.tab_panel.stat = "standby"
     },
     
     //詳細表示パネル操作用
