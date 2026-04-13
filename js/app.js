@@ -361,7 +361,7 @@ Vue.createApp({
       if(!this.sortOrders){
         // console.log("retuen visibleBooks prev_load_pattorn", Array(24).fill(""))
         
-        return Array(12).fill("");
+        return Array(128).fill("");
       }
       
       let isbns = this.sort_match_isbns
@@ -410,7 +410,7 @@ Vue.createApp({
     },
     slicedVisibleIsbns(){   
       const offset = Math.max(this.booklet.top_orver_book_row - 1, 0) * this.booklet.book_x_num;   
-      console.log(this.visibleIsbns.length, offset, this.visibleIsbns.at(0), this.visibleIsbns.at(-1))
+      // console.log(this.visibleIsbns.length, offset, this.booklet.book_num, this.visibleIsbns.at(0), this.visibleIsbns.at(-1))
       return this.visibleIsbns.slice(offset, offset + this.booklet.book_num);
     },
     
@@ -589,26 +589,33 @@ Vue.createApp({
           // 最後までスクロールしきった場合(これがあることで夢幻スクロールを回避)
           Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num) - this.booklet.book_y_num - 1
         );
-        console.log(
-          bootlet_y, bookRect.height, Math.floor(bootlet_y / bookRect.height), ", ",
-          this.visibleIsbns.length, this.booklet.book_x_num, Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num), 
-          this.booklet.top_orver_book_row
-        )
+        // console.log(
+          // bootlet_y, bookRect.height, Math.floor(bootlet_y / bookRect.height), ", ",
+          // this.visibleIsbns.length, this.booklet.book_x_num, Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num), 
+          // this.booklet.top_orver_book_row
+        // )
     },
     refresh_booklet_size(){
       const layerRect = this.$refs.bookletLayer.getBoundingClientRect()
-      console.log(this.$refs)
+      // console.log(this.$refs)
       const children = this.$refs.booklet.children
       const firstTop = children[0]?.offsetTop ?? 0
-
+      
+      const offsetTopArray = []
+      for (const el of children) {
+        offsetTopArray.push(el.offsetTop)
+      }
       let colCount = 0
       for (const el of children) {
         if (el.offsetTop !== firstTop) break
         colCount++
       }
       this.booklet.book_x_num = colCount
-      this.booklet.book_y_num = Math.floor(layerRect.height / bookRect.height)
+      this.booklet.book_y_num = Math.floor(layerRect.height / bookRect.height) + 1 // 下方向への表示のバッファのために+1
       this.booklet.book_num = this.booklet.book_x_num * (this.booklet.book_y_num + this.booklet.book_y_buff)
+      // console.log(offsetTopArray)
+      // console.log(layerRect.height, bookRect.height, layerRect.height / bookRect.height)
+      // console.log(this.booklet.book_x_num, this.booklet.book_y_num, this.booklet.book_num)
     },
     
     // 検索表示用データ読み込み系
@@ -622,10 +629,10 @@ Vue.createApp({
       })
       .then(data => {
           this.index = data;
-          this.loadSorts(true);
+          this.loadSorts(true, callback=this.refresh_booklet_size);
       })
     },
-    async loadSorts(def_only = false){
+    async loadSorts(def_only = false, callback = null){
       // console.log("call loadFirstSort")
       if(
         this.sortOrders &&
@@ -665,10 +672,11 @@ Vue.createApp({
             "indexs": Object.fromEntries(result),
             "def_only": def_only
           }
+          if(callback)callback();
         })
       )
     },
-    async loadTokens(calback = null){
+    async loadTokens(callback = null){
       
       if(this.tokenOrders){
         this.loadTextAnarizer();
@@ -706,7 +714,7 @@ Vue.createApp({
           }
           
           this.loadTextAnarizer();
-          if(calback)calback();
+          if(callback)callback();
         })
       );
     },

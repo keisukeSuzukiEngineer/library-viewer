@@ -116,57 +116,9 @@
       </div>
       <div id="query_panel_opener" @click="query_pane_toggle()"></div>
     </div>
-    <!-- <main id="booklet-origin" :class="booklet_class" style="display: none;"> -->
-      <!-- <div -->
-        <!-- v-for="book in books" -->
-        <!-- :key="book.isbn" -->
-        <!-- class="book-card" -->
-        <!-- :data-isbn="book.record.isbn" -->
-        <!-- :ref="el => register_observe(el)" -->
-      <!-- > -->
-        <!-- <img  -->
-          <!-- :src="book.record.cover_url"  -->
-          <!-- style="display:none;" -->
-          <!-- v-if="book.stat == 'loaded'" -->
-          <!-- @load="set_book_stat(book.record.isbn)" -->
-        <!-- > -->
-        <!-- <img  -->
-           <!-- v-if="book.stat == 'imgLoaded'" -->
-          <!-- class="cover"  -->
-          <!-- :src="book.record.cover_url"  -->
-          <!-- @click.stop="show_detail(book.record.isbn)" -->
-          <!-- style="display:none;"  -->
-          <!-- :style="{'display':'block'}" -->
-        <!-- /> -->
-        <!-- <div class="loading" v-if="book.stat != 'imgLoaded'" ></div> -->
-      <!-- </div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-      <!-- <div v-if="false" class="book-card"><div class="loading"></div></div> -->
-    <!-- </main> -->
-    <main id="booklet-layer" ref="bookletLayer">
+    <main id="booklet-layer" ref="bookletLayer" :class="booklet_class">
       <div id="booklet-scroll-supporter" ref="bookletScrollSupporter" :style="bookletSupporterStyle"></div> 
-      <div id="booklet"  ref="booklet" :class="booklet_class" :style="bookletStyle">
+      <div id="booklet"  ref="booklet" :style="bookletStyle">
         <div
           v-for="book in books"
           :key="book.isbn"
