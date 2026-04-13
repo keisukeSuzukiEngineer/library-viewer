@@ -227,6 +227,12 @@ const CompA = {
   }
 }
 
+// cssで指定した値
+const bookRect = {
+  height: 165,
+  width: 90
+}
+
 Vue.createApp({
   data() {
     return {
@@ -282,7 +288,16 @@ Vue.createApp({
       },
       booksByIsbn: {},
       booklet: {
-        is_slide_bottom: false
+        book_x_num: 3, // 画面サイズで動的に変化する列数
+        book_y_num: 5, // 画面サイズで動的に変化する行数(スクロールバッファ含む)
+        book_y_buff: 2, // 画面サイズで動的に変化する行数(スクロールバッファ含む)
+        book_num: 21, // 画面サイズで動的に変化する一度に表示する冊数
+        top_orver_book_row: 0, 
+        is_slide_bottom: false,
+        style: {
+          height: (bookRect.height*7)+"px",
+          "marginTop": "0",
+        }
       },
 
       // 詳細表示用
@@ -367,12 +382,40 @@ Vue.createApp({
       // console.log("taged isbns.length: ", isbns.length)
       if(isbns.length == 0)return isbns
       
-     // TODO ここで表示するisbnをsliceするはず
-      
       return isbns;
     },
+    bookletStyle(){
+        // console.log(
+          // this.booklet.book_y_num+this.booklet.book_y_buff, "-", 
+          // this.visibleIsbns.length , 
+          // this.booklet.book_x_num,
+          // Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num),
+          // this.visibleIsbns[0],
+          // this.visibleIsbns.at(-1)
+        // )
+        return {
+          // heightは画面内に表示しきれる場合と、表示しきれない場合両方を想定
+          'height': bookRect.height*Math.min(
+            this.booklet.book_y_num+this.booklet.book_y_buff, 
+            Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num)
+          )+"px",
+          "marginTop": (Math.max(this.booklet.top_orver_book_row - 1, 0)*bookRect.height)+"px"
+        }
+    },
+    bookletSupporterStyle(){
+        // console.log(this.visibleIsbns.length, this.booklet.book_x_num, this.visibleIsbns.length / this.booklet.book_x_num)
+        return {
+          'height': (bookRect.height*Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num))+"px",
+        }
+    },
+    slicedVisibleIsbns(){   
+      const offset = Math.max(this.booklet.top_orver_book_row - 1, 0) * this.booklet.book_x_num;   
+      console.log(this.visibleIsbns.length, offset, this.visibleIsbns.at(0), this.visibleIsbns.at(-1))
+      return this.visibleIsbns.slice(offset, offset + this.booklet.book_num);
+    },
+    
     books(){
-      return this.visibleIsbns.map(isbn=>this.booksByIsbn[isbn]??{record:{isbn:isbn}})
+      return this.slicedVisibleIsbns.map(isbn=>this.booksByIsbn[isbn]??{record:{isbn:isbn}})
     },
     
     // 検索パネル表示関係
@@ -491,6 +534,7 @@ Vue.createApp({
   async mounted() {
     this.standby_observer();
     this.set_events();
+    this.refresh_booklet_size();
     // await this.loadIndex();
     // await this.loadSorts(def_only=true);
     // this.change_search_text(); // 基本不要だが、js側で初めから検索テキストを設定していた場合に必要
@@ -518,18 +562,53 @@ Vue.createApp({
     },
     // 要素へのイベント設定用
     set_events(){
-      window.addEventListener(
-      "scroll",
-      () => {
-          let isInputFocused = false
-          if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
-            isInputFocused = true;
-          }
-          this.add_logs(`isInputFocused:${isInputFocused}`)
-          if(!isInputFocused)this.query_pane_close()
-        }, 
-        { passive: true }
-      );
+      window.addEventListener("scroll", this.query_pane_close, { passive: true });
+      this.$refs.bookletLayer.addEventListener("scroll", this.query_pane_close, { passive: true });
+      this.$refs.bookletLayer.addEventListener("scroll", this.refresh_top_orver_book_row);
+      window.addEventListener("resize", this.refresh_booklet_size)
+    },
+    query_pane_close(){
+      let isInputFocused = false
+      if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+        isInputFocused = true;
+      }
+      this.add_logs(`isInputFocused:${isInputFocused}`)
+      if(!isInputFocused)this.query_pane_close()
+    },
+    refresh_top_orver_book_row(){
+        // const el = this.$refs.booklet
+        // if (!el) return
+        
+        const parent_y = this.$refs.bookletLayer.getBoundingClientRect().top
+        const support_y = this.$refs.bookletScrollSupporter.getBoundingClientRect().top
+        const bootlet_y = parent_y - support_y;
+        this.booklet.top_orver_book_row = Math.min(
+          // スクロール中の位置
+          Math.floor(bootlet_y / bookRect.height), 
+          
+          // 最後までスクロールしきった場合(これがあることで夢幻スクロールを回避)
+          Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num) - this.booklet.book_y_num - 1
+        );
+        console.log(
+          bootlet_y, bookRect.height, Math.floor(bootlet_y / bookRect.height), ", ",
+          this.visibleIsbns.length, this.booklet.book_x_num, Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num), 
+          this.booklet.top_orver_book_row
+        )
+    },
+    refresh_booklet_size(){
+      const layerRect = this.$refs.bookletLayer.getBoundingClientRect()
+      console.log(this.$refs)
+      const children = this.$refs.booklet.children
+      const firstTop = children[0]?.offsetTop ?? 0
+
+      let colCount = 0
+      for (const el of children) {
+        if (el.offsetTop !== firstTop) break
+        colCount++
+      }
+      this.booklet.book_x_num = colCount
+      this.booklet.book_y_num = Math.floor(layerRect.height / bookRect.height)
+      this.booklet.book_num = this.booklet.book_x_num * (this.booklet.book_y_num + this.booklet.book_y_buff)
     },
     
     // 検索表示用データ読み込み系
@@ -704,7 +783,7 @@ Vue.createApp({
     },
     loadTagAnalyzer(){
       if(this.trie.has_tag_char){
-        console.log("skip loadAnarizer")
+        // console.log("skip loadAnarizer")
         return
       }
       
@@ -1013,6 +1092,7 @@ Vue.createApp({
     
     //詳細表示パネル操作用
     show_reset(){
+      // console.log("call show_reset")
       const tmp_isbn = this.show_isbn;
       this.detail_open = false;
       setTimeout(() => {

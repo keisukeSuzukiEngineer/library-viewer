@@ -76,6 +76,7 @@ body {
     margin-top: 4rem;
     transform: translateY(calc(-100% + 4rem));
     transition: transform 0.5s ease;
+    z-index: 1;
     
     &.open{
         transform: none;
@@ -303,7 +304,8 @@ body {
 }
 
 /* グリッド */
-#booklet {
+#booklet-origin {
+    min-height: calc(165px * 5);
     margin-top: 5rem;
     transition: margin 0.5s ease;
     display: grid;
@@ -353,6 +355,66 @@ body {
 
 }
 
+
+#booklet-layer {
+    z-indez: 1;
+    margin-top: 5rem;
+    height: calc(100vh - 5rem);
+    transition: margin 0.5s ease;
+    overflow-y: scroll;
+    position: relative;
+    
+    #booklet-scroll-supporter{
+      width: 100%;
+    }
+    
+    #booklet{
+      position: absolute;
+      top: 0;
+      
+      display: grid;
+      width: calc(100% - 20px);
+      grid-template-columns: repeat(auto-fill, 90px);
+      gap: 0 5px;
+      padding: 0px 10px;
+      /* border: 2px solid #333; */
+      justify-content: space-around;
+      background:
+        url(./../img/booklet-left.jpeg) left top / 20px 165px repeat-y,
+        url(./../img/booklet-right.jpeg) right top / 20px 165px repeat-y,
+        url(./../img/booklet-center.jpeg) top / 100% 165px repeat-y;
+    }
+    
+    &.slide_bottom{
+        margin-top: 20rem;
+    }
+
+    /* 1冊 */
+    .book-card {
+        height: 132px;
+        margin-top: 20px;
+        margin-bottom: 13px;
+        cursor: pointer;
+        
+        .loading{
+            height: 100%;
+            background: linear-gradient(270deg, #666, #999);
+            background-size: 200% 200%;
+            animation: Grad 5s ease infinite;
+        }
+        
+        .cover {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 2px;
+            object-fit: contain;
+            object-position: bottom center;
+        }
+    }
+
+}
+
 @keyframes Grad {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
@@ -369,6 +431,7 @@ body {
     background-color: rgb(50 50 50 / 0.5);
     transition: opacity 0.5s ease, visibility 0.5s ease;
     opacity: 0;
+    z-index: 1;
     
     &.open{
         /* display: block; */
