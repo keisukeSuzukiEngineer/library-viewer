@@ -129,6 +129,7 @@
           :key="book.isbn"
           class="book-card"
           :data-isbn="book.record.isbn"
+          :data-url="book.record.cover_url"
           :ref="el => register_observe(el)"
         >
           <img 
@@ -202,6 +203,6 @@
   <link rel="preload" as="image" href="./img/booklet-left.jpeg">
   <link rel="preload" as="image" href="./img/booklet-right.jpeg">
   <link rel="stylesheet" href="css/style.css" />
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+  <script src="js/vue.global.prod.js" defer></script>
   <script src="js/app.js"defer></script>
 </html>

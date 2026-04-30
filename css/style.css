@@ -245,6 +245,7 @@ body {
                 width: calc(100% - 6rem);
                 left: 3rem;
                 border-radius: 1rem;
+                background-color: white;
                 
                 li{
                   padding: 2px;

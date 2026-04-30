@@ -8,10 +8,11 @@
       ]
     },
     "002:叢書・全集": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "002:叢書・全集",
       "pages": [
-        "json/tags/tags_002_000.json"
+        "json/tags/tags_002_000.json",
+        "json/tags/tags_002_001.json"
       ]
     },
     "007:ジャーナリズム・新聞": {
@@ -57,6 +58,13 @@
         "json/tags/tags_159_001.json"
       ]
     },
+    "162:比較宗教": {
+      "page_num": 1,
+      "tag": "162:比較宗教",
+      "pages": [
+        "json/tags/tags_162_000.json"
+      ]
+    },
     "164:神話・神話学": {
       "page_num": 2,
       "tag": "164:神話・神話学",
@@ -79,11 +87,25 @@
         "json/tags/tags_169_000.json"
       ]
     },
+    "170:仏教総記": {
+      "page_num": 1,
+      "tag": "170:仏教総記",
+      "pages": [
+        "json/tags/tags_170_000.json"
+      ]
+    },
     "175:布教・伝道": {
       "page_num": 1,
       "tag": "175:布教・伝道",
       "pages": [
         "json/tags/tags_175_000.json"
+      ]
+    },
+    "191:イスラム教": {
+      "page_num": 1,
+      "tag": "191:イスラム教",
+      "pages": [
+        "json/tags/tags_191_000.json"
       ]
     },
     "193:東洋宗教": {
@@ -106,6 +128,13 @@
       "tag": "210:日本史",
       "pages": [
         "json/tags/tags_210_000.json"
+      ]
+    },
+    "280:伝記総記": {
+      "page_num": 1,
+      "tag": "280:伝記総記",
+      "pages": [
+        "json/tags/tags_280_000.json"
       ]
     },
     "288:個人伝記": {
@@ -157,6 +186,13 @@
         "json/tags/tags_319_000.json"
       ]
     },
+    "331:経済学": {
+      "page_num": 1,
+      "tag": "331:経済学",
+      "pages": [
+        "json/tags/tags_331_000.json"
+      ]
+    },
     "335:経営・管理": {
       "page_num": 2,
       "tag": "335:経営・管理",
@@ -193,6 +229,13 @@
       "tag": "366:労働・職業",
       "pages": [
         "json/tags/tags_366_000.json"
+      ]
+    },
+    "368:文化・民族学": {
+      "page_num": 1,
+      "tag": "368:文化・民族学",
+      "pages": [
+        "json/tags/tags_368_000.json"
       ]
     },
     "379:社会教育（生涯教育）": {
@@ -260,6 +303,13 @@
         "json/tags/tags_431_000.json"
       ]
     },
+    "443:恒星": {
+      "page_num": 1,
+      "tag": "443:恒星",
+      "pages": [
+        "json/tags/tags_443_000.json"
+      ]
+    },
     "451:地質学": {
       "page_num": 2,
       "tag": "451:地質学",
@@ -273,6 +323,20 @@
       "tag": "457:気象学",
       "pages": [
         "json/tags/tags_457_000.json"
+      ]
+    },
+    "459:地球物理学": {
+      "page_num": 1,
+      "tag": "459:地球物理学",
+      "pages": [
+        "json/tags/tags_459_000.json"
+      ]
+    },
+    "460:生物学": {
+      "page_num": 1,
+      "tag": "460:生物学",
+      "pages": [
+        "json/tags/tags_460_000.json"
       ]
     },
     "467:動物": {
@@ -304,11 +368,25 @@
         "json/tags/tags_473_000.json"
       ]
     },
+    "480:動物学": {
+      "page_num": 1,
+      "tag": "480:動物学",
+      "pages": [
+        "json/tags/tags_480_000.json"
+      ]
+    },
     "481:動物構造": {
       "page_num": 1,
       "tag": "481:動物構造",
       "pages": [
         "json/tags/tags_481_000.json"
+      ]
+    },
+    "482:動物生理": {
+      "page_num": 1,
+      "tag": "482:動物生理",
+      "pages": [
+        "json/tags/tags_482_000.json"
       ]
     },
     "486:両生類・爬虫類": {
@@ -333,11 +411,25 @@
         "json/tags/tags_498_000.json"
       ]
     },
+    "576:木材・木工": {
+      "page_num": 1,
+      "tag": "576:木材・木工",
+      "pages": [
+        "json/tags/tags_576_000.json"
+      ]
+    },
     "579:その他": {
       "page_num": 1,
       "tag": "579:その他",
       "pages": [
         "json/tags/tags_579_000.json"
+      ]
+    },
+    "588:家庭衛生": {
+      "page_num": 1,
+      "tag": "588:家庭衛生",
+      "pages": [
+        "json/tags/tags_588_000.json"
       ]
     },
     "673:流通": {
@@ -374,6 +466,13 @@
       "tag": "763:器楽",
       "pages": [
         "json/tags/tags_763_000.json"
+      ]
+    },
+    "779:その他": {
+      "page_num": 1,
+      "tag": "779:その他",
+      "pages": [
+        "json/tags/tags_779_000.json"
       ]
     },
     "780:スポーツ・体育": {
@@ -416,6 +515,13 @@
       "tag": "913:小説",
       "pages": [
         "json/tags/tags_913_000.json"
+      ]
+    },
+    "914:評論・随筆": {
+      "page_num": 1,
+      "tag": "914:評論・随筆",
+      "pages": [
+        "json/tags/tags_914_000.json"
       ]
     },
     "929:近隣諸国文学": {

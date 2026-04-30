@@ -1,7 +1,7 @@
 {
-  "page_num": 4,
-  "sort_key": "created_at",
-  "isbns": [
+  "page_num":4,
+  "sort_key":"created_at",
+  "isbns":[
     "9784791751600",
     "9784422100524",
     "9784393299500",

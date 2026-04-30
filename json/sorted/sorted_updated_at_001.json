@@ -1,7 +1,7 @@
 {
-  "page_num": 1,
-  "sort_key": "updated_at",
-  "isbns": [
+  "page_num":1,
+  "sort_key":"updated_at",
+  "isbns":[
     "9784569845999",
     "9784569902555",
     "9784569902562",

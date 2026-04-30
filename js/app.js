@@ -16,26 +16,61 @@ function set_and_merge(sets){
   
   return merged_set
 }
-async function loadAllPagesParallel(indexs, isbnIsSet = false) {
-    const result = {};
-    console.log(indexs)
-    await Promise.all(
-      Object.entries(indexs).map(async ([key, info]) => {
-        const pagesData = await Promise.all(
-          info.pages.map(p => fetch(p).then(r => r.json()))
-        );
 
-        // 🔽 ここで加工
-        const isbns = pagesData.flatMap(p => p.isbns);
+function parseCSV(text) {
+  const rows = []
+  let row = []
+  let field = ""
+  let inQuotes = false
 
-        result[key] = isbnIsSet
-          ? new Set(isbns)
-          : isbns;
-      })
-    );
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+    const nextChar = text[i + 1]
 
+    // "" → エスケープされた "
+    if (inQuotes && char === '"' && nextChar === '"') {
+      field += '"'
+      i++ // 次スキップ
+      continue
+    }
 
-    return result;
+    // クォート開始/終了
+    if (char === '"') {
+      inQuotes = !inQuotes
+      continue
+    }
+
+    // カンマ（区切り）
+    if (char === ',' && !inQuotes) {
+      row.push(field)
+      field = ""
+      continue
+    }
+
+    // 改行（レコード区切り）
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      // CRLF対応
+      if (char === '\r' && nextChar === '\n') i++
+
+      row.push(field)
+      rows.push(row)
+
+      row = []
+      field = ""
+      continue
+    }
+
+    // 通常文字
+    field += char
+  }
+
+  // 最後のフィールド
+  if (field.length > 0 || row.length > 0) {
+    row.push(field)
+    rows.push(row)
+  }
+
+  return rows
 }
   
 function debounce(fn, delay) {
@@ -159,6 +194,7 @@ class FetchManager {
 
           // CSV
           if (contentType.includes("text/csv") || url.endsWith(".csv")) {
+            // console.log(text)
             return parseCSV(text);
           }
           
@@ -415,6 +451,7 @@ Vue.createApp({
     },
     
     books(){
+      // console.log(this.slicedVisibleIsbns, this.slicedVisibleIsbns.map(isbn=>this.booksByIsbn[isbn]??{record:{isbn:isbn}}))
       return this.slicedVisibleIsbns.map(isbn=>this.booksByIsbn[isbn]??{record:{isbn:isbn}})
     },
     
@@ -808,22 +845,41 @@ Vue.createApp({
     },
     async loadBook(isbn, entry) {
       if (this.booksByIsbn[isbn]) return;
+      if (!isbn) return;
 
       // プレースホルダ（即反映）
       this.$set
         ? this.$set(this.booksByIsbn, isbn, null)
         : (this.booksByIsbn[isbn] = null);
-
+      
+      tail = isbn.slice(-this.index.isbn_tail_n)
       fetchManager.request({
-        url:`json/books/book_${isbn}.json`,
+        // url:`json/books/book_${isbn}.json`,
+        url:`csv/books/book_${tail.padStart(4, '0')}.csv`,
         priority: entry.target,
         category: "books"
       })
-      .then(book => {
-        this.booksByIsbn[isbn] = {
-          ...book,
-          stat: "loaded"
-        };
+      .then(books => {
+        // 元がjsonだったから形式を合わせる
+        // this.booksByIsbn[isbn] = {
+          // ...book,
+          // stat: "loaded"
+        // };
+        for (let i = 0; i < books.length; i++) {
+          const book = books[i];
+          this.booksByIsbn[book[0]] = {
+            "record":{
+                ...Object.fromEntries(
+                  this.index.book_columns.map((k, j) => [k, book[j]])
+                ),
+                "cover_url": "./cover/"+book[0]+".jpg"
+            },
+            stat: "loaded"
+          };
+          
+          // console.log(book)
+          // console.log(book[0], this.booksByIsbn[book[0]]["record"])
+        }
       })
     },
     set_book_stat(isbn){
