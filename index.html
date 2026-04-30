@@ -11,9 +11,69 @@
   <meta property="og:image" content="./ogp.png">
   <meta property="og:url" content="./library-viewer/">
   <meta property="og:type" content="website">
+  <meta name="description" content="蔵書一覧の閲覧や検索を行うためのツール.">
 
   <link rel="preload" as="image" href="./img/app_icon.svg">
-  <link rel="stylesheet" href="css/style-loading.css" />
+  <link rel="preload" href="css/style-loading.css" as="style">
+
+  <style>
+  --   <link rel="stylesheet" href="css/style-loading.css" />
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fafafa;
+  }
+
+  @keyframes loadingIconFadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes loadingLayerFadeOut {
+    0% {
+      opacity: 1;
+      visibility: visible;
+    }
+    33% {
+      opacity: 1;
+    }
+    99% {
+      opacity: 0;
+      visibility: visible;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  #loadin_layer{
+      position: fixed;
+      z-index: 3;
+      background-color: white;
+      height: 100%;
+      width: 100%;
+      animation: loadingLayerFadeOut 2s ease forwards;
+      top:0;
+      
+      &:before{
+          content: "";
+          background-image: url(./../img/app_icon.svg);
+          background-repeat: no-repeat;
+          background-size: contain;
+          background-position: center;
+          height: 100%;
+          width: 100%;
+          max-width: 400px;
+          margin: auto;
+          display: block;
+          animation: loadingIconFadeIn 1.5s ease forwards;
+      }
+  }
+  </style>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div id="loadin_layer"></div>
@@ -133,6 +193,8 @@
           :ref="el => register_observe(el)"
         >
           <img 
+            width="90"
+            height="132"
             :src="book.record.cover_url" 
             style="display:none;"
             v-if="book.stat == 'loaded'"
@@ -140,9 +202,12 @@
           >
           <img 
              v-if="book.stat == 'imgLoaded'"
+            width="90"
+            height="132"
             class="cover" 
             :src="book.record.cover_url" 
             @click.stop="show_detail(book.record.isbn)"
+            :alt="book.record.title"
             style="display:none;" 
             :style="{'display':'block'}"
           />
@@ -165,7 +230,7 @@
         <div id="ctrl_panel">
           <div 
             class="edit_btn" 
-            v-if="book_detail.system_type = 'notion' && params['mode'] == 'admin'"
+            v-if="book_detail.system_type == 'notion' && params['mode'] == 'admin'"
              @click.self="open_notion(book_detail.external_book_id)">
             編集
           </div>
@@ -202,7 +267,6 @@
   <link rel="preload" as="image" href="./img/booklet-center.jpeg">
   <link rel="preload" as="image" href="./img/booklet-left.jpeg">
   <link rel="preload" as="image" href="./img/booklet-right.jpeg">
-  <link rel="stylesheet" href="css/style.css" />
   <script src="js/vue.global.prod.js" defer></script>
-  <script src="js/app.js"defer></script>
+  <script src="js/app.js" defer></script>
 </html>
