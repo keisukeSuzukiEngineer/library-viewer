@@ -151,20 +151,14 @@ class FetchManager {
     
     
     if(tasks[0]?.category == "books"){
-        // booksの場合はpriorityにelを入れておき、毎度fetchの直前に描画位置をもとにソートする
-        tasks.forEach(item => {
-          const rect = item.priority.getBoundingClientRect()
-
-          let y = rect.top
-          if (y < 0) y += 100000
-
-          item._y = y
-          item._x = rect.left
-        })
-        tasks.sort((a, b) => {
-          if (a._y !== b._y) return a._y - b._y
-          return a._x - b._x
-        })
+        if(app.booklet){
+          const viewTopIndex = app.booklet.top_orver_book_row * app.booklet.book_x_num
+          tasks.sort((a, b) => {
+            const a_position = app.visibleIsbns.findIndex(isbn => a.priority.dataset.isbn == isbn) - viewTopIndex;
+            const b_potision = app.visibleIsbns.findIndex(isbn => b.priority.dataset.isbn == isbn) - viewTopIndex;
+            return a_position - b_potision
+          })
+        }
     }
     else if(tasks._dirty){
         tasks.sort((a, b) => b.priority - a.priority);
