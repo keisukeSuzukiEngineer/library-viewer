@@ -152,23 +152,19 @@ class FetchManager {
     
     if(tasks[0]?.category == "books"){
         // booksの場合はpriorityにelを入れておき、毎度fetchの直前に描画位置をもとにソートする
-        // tasks.forEach(item => {
-          // // const rect = item.priority.getBoundingClientRect()
+        tasks.forEach(item => {
+          const rect = item.priority.getBoundingClientRect()
 
-          // let y = item.priority.top
-          // if (y < 0) y += 100000
+          let y = rect.top
+          if (y < 0) y += 100000
 
-          // item._y = y
-          // item._x = item.priority.left
-        // })
-        if(app.booklet){
-          const viewTopIndex = app.booklet.top_orver_book_row * app.booklet.book_x_num
-          tasks.sort((a, b) => {
-            const a_position = app.visibleIsbns.findIndex(isbn => a.priority.dataset.isbn == isbn) - viewTopIndex;
-            const b_potision = app.visibleIsbns.findIndex(isbn => b.priority.dataset.isbn == isbn) - viewTopIndex;
-            return a_position - b_potision
-          })
-        }
+          item._y = y
+          item._x = rect.left
+        })
+        tasks.sort((a, b) => {
+          if (a._y !== b._y) return a._y - b._y
+          return a._x - b._x
+        })
     }
     else if(tasks._dirty){
         tasks.sort((a, b) => b.priority - a.priority);
@@ -251,6 +247,21 @@ const fetchManager = new FetchManager({
 });
 // console.log(params)
 
+const CompA = {
+  template: `
+    <div>
+      <input v-model="text" @input="emitValue" placeholder="検索">
+    </div>
+  `,
+  data() {
+    return { text: "" }
+  },
+  methods: {
+    emitValue() {
+      this.$emit("update", this.text)
+    }
+  }
+}
 
 // cssで指定した値
 const bookRect = {
@@ -258,7 +269,7 @@ const bookRect = {
   width: 90
 }
 
-const app = Vue.createApp({
+Vue.createApp({
   data() {
     return {
       logs: [],
@@ -329,8 +340,6 @@ const app = Vue.createApp({
       show_isbn: null,
       detail_open: false,
       ndc_codes: null,
-      
-      // ticking: false,
     };
   },
 
@@ -411,17 +420,22 @@ const app = Vue.createApp({
       
       return isbns;
     },
-    bookletTop(){
-        return Math.max(this.booklet.top_orver_book_row - 1, 0)*bookRect.height
-    },
     bookletStyle(){
+        // console.log(
+          // this.booklet.book_y_num+this.booklet.book_y_buff, "-", 
+          // this.visibleIsbns.length , 
+          // this.booklet.book_x_num,
+          // Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num),
+          // this.visibleIsbns[0],
+          // this.visibleIsbns.at(-1)
+        // )
         return {
           // heightは画面内に表示しきれる場合と、表示しきれない場合両方を想定
           'height': bookRect.height*Math.min(
             this.booklet.book_y_num+this.booklet.book_y_buff, 
             Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num)
           )+"px",
-          "marginTop": this.bookletTop+"px"
+          "marginTop": (Math.max(this.booklet.top_orver_book_row - 1, 0)*bookRect.height)+"px"
         }
     },
     bookletSupporterStyle(){
@@ -585,41 +599,9 @@ const app = Vue.createApp({
     },
     // 要素へのイベント設定用
     set_events(){
-      let window_scroll_query_pane_close_ticking = false;
-      window.addEventListener("scroll", () => {
-        if (!window_scroll_query_pane_close_ticking) {
-          // console.log("window scroll query_pane_close")
-          requestAnimationFrame(() => {
-            this.query_pane_close()
-            window_scroll_query_pane_close_ticking = false
-          })
-          window_scroll_query_pane_close_ticking = true
-        }
-      }, { passive: true });
-      
-      let bookletLayer_scroll_query_pane_close_ticking = false;
-      this.$refs.bookletLayer.addEventListener("scroll", () => {
-        if (!bookletLayer_scroll_query_pane_close_ticking) {
-          // console.log("bookletLayer scroll query_pane_close")
-          requestAnimationFrame(() => {
-            this.query_pane_close()
-            bookletLayer_scroll_query_pane_close_ticking = false
-          })
-          bookletLayer_scroll_query_pane_close_ticking = true
-        }
-      }, { passive: true });
-      
-      let bookletLayer_scroll_refresh_top_orver_book_row_ticking = false;
-      this.$refs.bookletLayer.addEventListener("scroll", () => {
-        if (!bookletLayer_scroll_refresh_top_orver_book_row_ticking) {
-          // console.log("bookletLayer scroll refresh_top_orver_book_row")
-          requestAnimationFrame(() => {
-            this.refresh_top_orver_book_row()
-            bookletLayer_scroll_refresh_top_orver_book_row_ticking = false
-          })
-          bookletLayer_scroll_refresh_top_orver_book_row_ticking = true
-        }
-      });
+      window.addEventListener("scroll", this.query_pane_close, { passive: true });
+      this.$refs.bookletLayer.addEventListener("scroll", this.query_pane_close, { passive: true });
+      this.$refs.bookletLayer.addEventListener("scroll", this.refresh_top_orver_book_row);
       window.addEventListener("resize", this.refresh_booklet_size)
     },
     query_pane_close(){
@@ -1198,6 +1180,4 @@ const app = Vue.createApp({
       this.logs = this.logs.slice(0, 10)
     }
   }
-})
-
-app.mount("#app");
+}).mount("#app");
