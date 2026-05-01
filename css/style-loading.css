@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fafafa;
+}
+
+@keyframes loadingIconFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loadingLayerFadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  33% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+#loadin_layer{
+    position: fixed;
+    z-index: 3;
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    animation: loadingLayerFadeOut 2s ease forwards;
+    top:0;
+    
+    &:before{
+        content: "";
+        background-image: url(./../img/app_icon.svg);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        height: 100%;
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        display: block;
+        animation: loadingIconFadeIn 1.5s ease forwards;
+    }
+}
