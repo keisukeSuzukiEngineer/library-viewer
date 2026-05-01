@@ -247,21 +247,6 @@ const fetchManager = new FetchManager({
 });
 // console.log(params)
 
-const CompA = {
-  template: `
-    <div>
-      <input v-model="text" @input="emitValue" placeholder="検索">
-    </div>
-  `,
-  data() {
-    return { text: "" }
-  },
-  methods: {
-    emitValue() {
-      this.$emit("update", this.text)
-    }
-  }
-}
 
 // cssで指定した値
 const bookRect = {
@@ -269,7 +254,7 @@ const bookRect = {
   width: 90
 }
 
-Vue.createApp({
+const app = Vue.createApp({
   data() {
     return {
       logs: [],
@@ -420,22 +405,17 @@ Vue.createApp({
       
       return isbns;
     },
+    bookletTop(){
+      return Math.max(this.booklet.top_orver_book_row - 1, 0)*bookRect.height
+    },
     bookletStyle(){
-        // console.log(
-          // this.booklet.book_y_num+this.booklet.book_y_buff, "-", 
-          // this.visibleIsbns.length , 
-          // this.booklet.book_x_num,
-          // Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num),
-          // this.visibleIsbns[0],
-          // this.visibleIsbns.at(-1)
-        // )
         return {
           // heightは画面内に表示しきれる場合と、表示しきれない場合両方を想定
           'height': bookRect.height*Math.min(
             this.booklet.book_y_num+this.booklet.book_y_buff, 
             Math.ceil(this.visibleIsbns.length / this.booklet.book_x_num)
           )+"px",
-          "marginTop": (Math.max(this.booklet.top_orver_book_row - 1, 0)*bookRect.height)+"px"
+          "marginTop": this.bookletTop+"px"
         }
     },
     bookletSupporterStyle(){
@@ -1180,4 +1160,5 @@ Vue.createApp({
       this.logs = this.logs.slice(0, 10)
     }
   }
-}).mount("#app");
+});
+app.mount("#app");
