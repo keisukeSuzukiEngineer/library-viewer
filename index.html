@@ -74,7 +74,6 @@
   <link rel="preload" href="css/style.css" as="style" onload="this.rel='stylesheet'">
 </head>
 <body>
-  <div id="loadin_layer"></div>
   <div id="app">
     <div 
       id="message_panel"
@@ -101,6 +100,7 @@
           <select 
             v-model="sortOrders.key"
             id="key_select"
+            aria-label="ソートキー"
             :class="sort_editor_select_class"
           >
             <option 
@@ -114,6 +114,7 @@
           <select 
             v-model="sortOrders.order"
             id="order_select"
+            aria-label="ソートオーダー"
             :class="sort_editor_select_class"
           >
             <option 
@@ -134,6 +135,7 @@
           <label>検索: </label>
           <input 
             type="text" 
+            aria-label="絞り込み文字列"
             v-model="searchText"
             :class="text_panel_input_class"
             />
@@ -147,10 +149,11 @@
           <label>タグ: </label>
           <input 
             type="text" 
+            aria-label="タグ検索文字列"
             v-model="tagText"
             :class="tag_panel_input_class"
             />
-            <ul>
+            <ul　aria-label="タグ候補">
               <li 
                 v-for="matched_tag_isbns in matched_tags_isbns"
                 @click="click_tag_list(matched_tag_isbns)"
@@ -199,6 +202,7 @@
             style="display:none;"
             v-if="book.stat == 'loaded'"
             @load="set_book_stat(book.record.isbn)"
+            fetchpriority="high"
           >
           <img 
              v-if="book.stat == 'imgLoaded'"
@@ -210,6 +214,7 @@
             :alt="book.record.title"
             style="display:none;" 
             :style="{'display':'block'}"
+            fetchpriority="high"
           />
           <div class="loading" v-if="book.stat != 'imgLoaded'" ></div>
         </div>
@@ -260,6 +265,7 @@
         </table>
       </div>
     </div>
+    <div id="loadin_layer"></div>
   </div>
   
    
