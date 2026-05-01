@@ -15,7 +15,6 @@
 
   <link rel="preload" as="image" href="./img/app_icon.svg">
   <style>
-  --   <link rel="stylesheet" href="css/style-loading.css" />
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -71,7 +70,6 @@
       }
   }
   </style>
-  <link rel="preload" href="css/style.css" as="style" onload="this.rel='stylesheet'">
 </head>
 <body>
   <div id="app">
@@ -210,6 +208,7 @@
             height="132"
             class="cover" 
             :src="book.record.cover_url" 
+            @load="set_book_stat(book.record.isbn)"
             @click.stop="show_detail(book.record.isbn)"
             :alt="book.record.title"
             style="display:none;" 
@@ -270,9 +269,10 @@
   
    
   </body>
-  <link rel="preload" as="image" href="./img/booklet-center.jpeg">
-  <link rel="preload" as="image" href="./img/booklet-left.jpeg">
-  <link rel="preload" as="image" href="./img/booklet-right.jpeg">
+  <!-- <link rel="preload" as="image" href="./img/booklet-center.jpeg"> -->
+  <!-- <link rel="preload" as="image" href="./img/booklet-left.jpeg"> -->
+  <!-- <link rel="preload" as="image" href="./img/booklet-right.jpeg"> -->
   <script src="js/vue.global.prod.js" defer></script>
   <script src="js/app.js" defer></script>
+  <link rel="preload" href="css/style.css" as="style" onload="this.rel='stylesheet'">
 </html>
