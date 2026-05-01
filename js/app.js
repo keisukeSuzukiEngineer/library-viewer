@@ -579,10 +579,44 @@ const app = Vue.createApp({
     },
     // 要素へのイベント設定用
     set_events(){
-      window.addEventListener("scroll", this.query_pane_close, { passive: true });
-      this.$refs.bookletLayer.addEventListener("scroll", this.query_pane_close, { passive: true });
-      this.$refs.bookletLayer.addEventListener("scroll", this.refresh_top_orver_book_row);
+      let window_scroll_query_pane_close_ticking = false;
+      window.addEventListener("scroll", () => {
+        if (!window_scroll_query_pane_close_ticking) {
+          // console.log("window scroll query_pane_close")
+          requestAnimationFrame(() => {
+            this.query_pane_close()
+            window_scroll_query_pane_close_ticking = false
+          })
+          window_scroll_query_pane_close_ticking = true
+        }
+      }, { passive: true });
+      
+      let bookletLayer_scroll_query_pane_close_ticking = false;
+      this.$refs.bookletLayer.addEventListener("scroll", () => {
+        if (!bookletLayer_scroll_query_pane_close_ticking) {
+          // console.log("bookletLayer scroll query_pane_close")
+          requestAnimationFrame(() => {
+            this.query_pane_close()
+            bookletLayer_scroll_query_pane_close_ticking = false
+          })
+          bookletLayer_scroll_query_pane_close_ticking = true
+        }
+      }, { passive: true });
+      
+      let bookletLayer_scroll_refresh_top_orver_book_row_ticking = false;
+      this.$refs.bookletLayer.addEventListener("scroll", () => {
+        if (!bookletLayer_scroll_refresh_top_orver_book_row_ticking) {
+          // console.log("bookletLayer scroll refresh_top_orver_book_row")
+          requestAnimationFrame(() => {
+            this.refresh_top_orver_book_row()
+            bookletLayer_scroll_refresh_top_orver_book_row_ticking = false
+          })
+          bookletLayer_scroll_refresh_top_orver_book_row_ticking = true
+        }
+      });
+      
       window.addEventListener("resize", this.refresh_booklet_size)
+      
     },
     query_pane_close(){
       let isInputFocused = false
