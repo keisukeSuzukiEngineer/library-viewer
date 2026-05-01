@@ -872,7 +872,7 @@ Vue.createApp({
                 ...Object.fromEntries(
                   this.index.book_columns.map((k, j) => [k, book[j]])
                 ),
-                "cover_url": "./cover/"+book[0]+".jpg"
+                "cover_url": "./cover/"+book[0]+".webp"
             },
             stat: "loaded"
           };

@@ -14,8 +14,6 @@
   <meta name="description" content="蔵書一覧の閲覧や検索を行うためのツール.">
 
   <link rel="preload" as="image" href="./img/app_icon.svg">
-  <link rel="preload" href="css/style-loading.css" as="style">
-
   <style>
   --   <link rel="stylesheet" href="css/style-loading.css" />
   body {
@@ -60,7 +58,7 @@
       
       &:before{
           content: "";
-          background-image: url(./../img/app_icon.svg);
+          background-image: url(./img/app_icon.svg);
           background-repeat: no-repeat;
           background-size: contain;
           background-position: center;
@@ -73,7 +71,7 @@
       }
   }
   </style>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preload" href="css/style.css" as="style" onload="this.rel='stylesheet'">
 </head>
 <body>
   <div id="loadin_layer"></div>
@@ -99,7 +97,7 @@
           :class="sort_editor_class"
           v-if="sortOrders"
         >
-          <span>並替: </span>
+          <label>並替: </label>
           <select 
             v-model="sortOrders.key"
             id="key_select"
@@ -133,7 +131,8 @@
           v-if="!query_panel.is_loading"
           :class="text_panel_class"
         >
-          検索: <input 
+          <label>検索: </label>
+          <input 
             type="text" 
             v-model="searchText"
             :class="text_panel_input_class"
@@ -145,7 +144,8 @@
           v-if="!query_panel.is_loading"
           :class="tag_panel_class"
         >
-          タグ: <input 
+          <label>タグ: </label>
+          <input 
             type="text" 
             v-model="tagText"
             :class="tag_panel_input_class"
