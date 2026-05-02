@@ -165,6 +165,13 @@
         "json/tags/tags_302_000.json"
       ]
     },
+    "309:政策・行政総記": {
+      "page_num": 1,
+      "tag": "309:政策・行政総記",
+      "pages": [
+        "json/tags/tags_309_000.json"
+      ]
+    },
     "310:政治": {
       "page_num": 1,
       "tag": "310:政治",
@@ -187,10 +194,11 @@
       ]
     },
     "331:経済学": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "331:経済学",
       "pages": [
-        "json/tags/tags_331_000.json"
+        "json/tags/tags_331_000.json",
+        "json/tags/tags_331_001.json"
       ]
     },
     "335:経営・管理": {
@@ -288,6 +296,20 @@
         "json/tags/tags_417_000.json"
       ]
     },
+    "421:力学": {
+      "page_num": 1,
+      "tag": "421:力学",
+      "pages": [
+        "json/tags/tags_421_000.json"
+      ]
+    },
+    "425:光学": {
+      "page_num": 1,
+      "tag": "425:光学",
+      "pages": [
+        "json/tags/tags_425_000.json"
+      ]
+    },
     "430:化学": {
       "page_num": 2,
       "tag": "430:化学",
@@ -368,6 +390,13 @@
         "json/tags/tags_473_000.json"
       ]
     },
+    "479:その他植物学": {
+      "page_num": 1,
+      "tag": "479:その他植物学",
+      "pages": [
+        "json/tags/tags_479_000.json"
+      ]
+    },
     "480:動物学": {
       "page_num": 1,
       "tag": "480:動物学",
@@ -376,10 +405,11 @@
       ]
     },
     "481:動物構造": {
-      "page_num": 1,
+      "page_num": 2,
       "tag": "481:動物構造",
       "pages": [
-        "json/tags/tags_481_000.json"
+        "json/tags/tags_481_000.json",
+        "json/tags/tags_481_001.json"
       ]
     },
     "482:動物生理": {
@@ -387,6 +417,13 @@
       "tag": "482:動物生理",
       "pages": [
         "json/tags/tags_482_000.json"
+      ]
+    },
+    "484:無脊椎動物": {
+      "page_num": 1,
+      "tag": "484:無脊椎動物",
+      "pages": [
+        "json/tags/tags_484_000.json"
       ]
     },
     "486:両生類・爬虫類": {
@@ -402,6 +439,13 @@
       "tag": "491:基礎医学",
       "pages": [
         "json/tags/tags_491_000.json"
+      ]
+    },
+    "493:内科学": {
+      "page_num": 1,
+      "tag": "493:内科学",
+      "pages": [
+        "json/tags/tags_493_000.json"
       ]
     },
     "498:衛生学・予防医学": {
